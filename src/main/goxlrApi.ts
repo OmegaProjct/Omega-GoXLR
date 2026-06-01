@@ -2,9 +2,14 @@ import {
   GoXlrAnimationMode,
   DaemonStatus,
   GoXlrChannelName,
+  GoXlrCompressorAttackTime,
+  GoXlrCompressorRatio,
+  GoXlrCompressorReleaseTime,
+  GoXlrDisplayMode,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGateTime,
   GoXlrGenderStyle,
   GoXlrHardTuneSource,
   GoXlrHardTuneStyle,
@@ -119,6 +124,85 @@ export async function setMicrophoneGain(
 ): Promise<void> {
   await sendMixerCommand(serial, {
     SetMicrophoneGain: [microphoneType, gain]
+  })
+}
+
+export async function setGateThreshold(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGateThreshold: value
+  })
+}
+
+export async function setGateAttenuation(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGateAttenuation: value
+  })
+}
+
+export async function setGateAttack(serial: string, value: GoXlrGateTime): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGateAttack: value
+  })
+}
+
+export async function setGateRelease(serial: string, value: GoXlrGateTime): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGateRelease: value
+  })
+}
+
+export async function setGateActive(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGateActive: enabled
+  })
+}
+
+export async function setCompressorThreshold(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetCompressorThreshold: value
+  })
+}
+
+export async function setCompressorRatio(
+  serial: string,
+  value: GoXlrCompressorRatio
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetCompressorRatio: value
+  })
+}
+
+export async function setCompressorAttack(
+  serial: string,
+  value: GoXlrCompressorAttackTime
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetCompressorAttack: value
+  })
+}
+
+export async function setCompressorReleaseTime(
+  serial: string,
+  value: GoXlrCompressorReleaseTime
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetCompressorReleaseTime: value
+  })
+}
+
+export async function setCompressorMakeupGain(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetCompressorMakeUpGain: value
+  })
+}
+
+export async function setElementDisplayMode(
+  serial: string,
+  component: 'NoiseGate' | 'Equaliser' | 'Compressor' | 'EqFineTune',
+  mode: GoXlrDisplayMode
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetElementDisplayMode: [component, mode]
   })
 }
 

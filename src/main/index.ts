@@ -5,9 +5,20 @@ import {
   addSampleToButton,
   fetchDaemonStatus,
   removeSampleByIndex,
+  setCompressorAttack,
+  setCompressorMakeupGain,
+  setCompressorRatio,
+  setCompressorReleaseTime,
+  setCompressorThreshold,
+  setElementDisplayMode,
   setEchoAmount,
   setEchoStyle,
   setFxEnabled,
+  setGateActive,
+  setGateAttack,
+  setGateAttenuation,
+  setGateRelease,
+  setGateThreshold,
   setGenderAmount,
   setGenderStyle,
   setHardTuneAmount,
@@ -66,9 +77,14 @@ import {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrCompressorAttackTime,
+  GoXlrCompressorRatio,
+  GoXlrCompressorReleaseTime,
+  GoXlrDisplayMode,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGateTime,
   GoXlrGenderStyle,
   GoXlrHardTuneSource,
   GoXlrHardTuneStyle,
@@ -212,6 +228,90 @@ function setupIpc(): void {
     'goxlr:set-mic-gain',
     async (_event, payload: { serial: string; microphoneType: GoXlrMicrophoneType; gain: number }) => {
       await setMicrophoneGain(payload.serial, payload.microphoneType, payload.gain)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gate-threshold',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setGateThreshold(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gate-attenuation',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setGateAttenuation(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gate-attack',
+    async (_event, payload: { serial: string; value: GoXlrGateTime }) => {
+      await setGateAttack(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gate-release',
+    async (_event, payload: { serial: string; value: GoXlrGateTime }) => {
+      await setGateRelease(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gate-active',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setGateActive(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-compressor-threshold',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setCompressorThreshold(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-compressor-ratio',
+    async (_event, payload: { serial: string; value: GoXlrCompressorRatio }) => {
+      await setCompressorRatio(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-compressor-attack',
+    async (_event, payload: { serial: string; value: GoXlrCompressorAttackTime }) => {
+      await setCompressorAttack(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-compressor-release',
+    async (_event, payload: { serial: string; value: GoXlrCompressorReleaseTime }) => {
+      await setCompressorReleaseTime(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-compressor-makeup-gain',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setCompressorMakeupGain(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-display-mode',
+    async (
+      _event,
+      payload: {
+        serial: string
+        component: 'NoiseGate' | 'Equaliser' | 'Compressor' | 'EqFineTune'
+        mode: GoXlrDisplayMode
+      }
+    ) => {
+      await setElementDisplayMode(payload.serial, payload.component, payload.mode)
       return buildAppState()
     }
   )

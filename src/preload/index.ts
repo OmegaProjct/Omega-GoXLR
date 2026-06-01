@@ -14,6 +14,28 @@ const api = {
     ipcRenderer.invoke('goxlr:set-mic-type', { serial, microphoneType }),
   setMicGain: (serial: string, microphoneType: string, gain: number) =>
     ipcRenderer.invoke('goxlr:set-mic-gain', { serial, microphoneType, gain }),
+  setGateThreshold: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-gate-threshold', { serial, value }),
+  setGateAttenuation: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-gate-attenuation', { serial, value }),
+  setGateAttack: (serial: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-gate-attack', { serial, value }),
+  setGateRelease: (serial: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-gate-release', { serial, value }),
+  setGateActive: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-gate-active', { serial, enabled }),
+  setCompressorThreshold: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-compressor-threshold', { serial, value }),
+  setCompressorRatio: (serial: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-compressor-ratio', { serial, value }),
+  setCompressorAttack: (serial: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-compressor-attack', { serial, value }),
+  setCompressorRelease: (serial: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-compressor-release', { serial, value }),
+  setCompressorMakeupGain: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-compressor-makeup-gain', { serial, value }),
+  setDisplayMode: (serial: string, component: string, mode: string) =>
+    ipcRenderer.invoke('goxlr:set-display-mode', { serial, component, mode }),
   loadProfile: (serial: string, profileName: string) =>
     ipcRenderer.invoke('goxlr:load-profile', { serial, profileName }),
   saveProfile: (serial: string) => ipcRenderer.invoke('goxlr:save-profile', { serial }),

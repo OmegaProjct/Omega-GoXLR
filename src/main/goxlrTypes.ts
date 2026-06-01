@@ -44,6 +44,112 @@ export type GoXlrMicrophoneType = 'Dynamic' | 'Condenser' | 'Jack'
 export type GoXlrMix = 'A' | 'B'
 export type GoXlrEffectPreset = 'Preset1' | 'Preset2' | 'Preset3' | 'Preset4' | 'Preset5' | 'Preset6'
 export type GoXlrVodMode = 'Routable' | 'StreamNoMusic'
+export type GoXlrCompressorRatio =
+  | 'Ratio1_0'
+  | 'Ratio1_1'
+  | 'Ratio1_2'
+  | 'Ratio1_4'
+  | 'Ratio1_6'
+  | 'Ratio1_8'
+  | 'Ratio2_0'
+  | 'Ratio2_5'
+  | 'Ratio3_2'
+  | 'Ratio4_0'
+  | 'Ratio5_6'
+  | 'Ratio8_0'
+  | 'Ratio16_0'
+  | 'Ratio32_0'
+  | 'Ratio64_0'
+export type GoXlrGateTime =
+  | 'Gate10ms'
+  | 'Gate20ms'
+  | 'Gate30ms'
+  | 'Gate40ms'
+  | 'Gate50ms'
+  | 'Gate60ms'
+  | 'Gate70ms'
+  | 'Gate80ms'
+  | 'Gate90ms'
+  | 'Gate100ms'
+  | 'Gate110ms'
+  | 'Gate120ms'
+  | 'Gate130ms'
+  | 'Gate140ms'
+  | 'Gate150ms'
+  | 'Gate160ms'
+  | 'Gate170ms'
+  | 'Gate180ms'
+  | 'Gate190ms'
+  | 'Gate200ms'
+  | 'Gate250ms'
+  | 'Gate300ms'
+  | 'Gate350ms'
+  | 'Gate400ms'
+  | 'Gate450ms'
+  | 'Gate500ms'
+  | 'Gate550ms'
+  | 'Gate600ms'
+  | 'Gate650ms'
+  | 'Gate700ms'
+  | 'Gate750ms'
+  | 'Gate800ms'
+  | 'Gate850ms'
+  | 'Gate900ms'
+  | 'Gate950ms'
+  | 'Gate1000ms'
+  | 'Gate1100ms'
+  | 'Gate1200ms'
+  | 'Gate1300ms'
+  | 'Gate1400ms'
+  | 'Gate1500ms'
+  | 'Gate1600ms'
+  | 'Gate1700ms'
+  | 'Gate1800ms'
+  | 'Gate1900ms'
+  | 'Gate2000ms'
+export type GoXlrCompressorAttackTime =
+  | 'Comp0ms'
+  | 'Comp2ms'
+  | 'Comp3ms'
+  | 'Comp4ms'
+  | 'Comp5ms'
+  | 'Comp6ms'
+  | 'Comp7ms'
+  | 'Comp8ms'
+  | 'Comp9ms'
+  | 'Comp10ms'
+  | 'Comp12ms'
+  | 'Comp14ms'
+  | 'Comp16ms'
+  | 'Comp18ms'
+  | 'Comp20ms'
+  | 'Comp23ms'
+  | 'Comp26ms'
+  | 'Comp30ms'
+  | 'Comp35ms'
+  | 'Comp40ms'
+export type GoXlrCompressorReleaseTime =
+  | 'Comp0ms'
+  | 'Comp15ms'
+  | 'Comp25ms'
+  | 'Comp35ms'
+  | 'Comp45ms'
+  | 'Comp55ms'
+  | 'Comp65ms'
+  | 'Comp75ms'
+  | 'Comp85ms'
+  | 'Comp100ms'
+  | 'Comp115ms'
+  | 'Comp140ms'
+  | 'Comp170ms'
+  | 'Comp230ms'
+  | 'Comp340ms'
+  | 'Comp680ms'
+  | 'Comp1000ms'
+  | 'Comp1500ms'
+  | 'Comp2000ms'
+  | 'Comp3000ms'
+export type GoXlrDisplayMode = 'Simple' | 'Advanced'
 export type GoXlrReverbStyle =
   | 'Library'
   | 'DarkBloom'
@@ -179,12 +285,16 @@ export type MixerStatus = {
     mic_gains: Record<GoXlrMicrophoneType, number>
     noise_gate: {
       threshold: number
+      attack: GoXlrGateTime
+      release: GoXlrGateTime
       enabled: boolean
       attenuation: number
     }
     compressor: {
       threshold: number
-      ratio: string
+      ratio: GoXlrCompressorRatio
+      attack: GoXlrCompressorAttackTime
+      release: GoXlrCompressorReleaseTime
       makeup_gain: number
     }
   }
@@ -318,10 +428,10 @@ export type MixerStatus = {
   } | null
   settings: {
     display: {
-      gate: string
-      compressor: string
-      equaliser: string
-      equaliser_fine: string
+      gate: GoXlrDisplayMode
+      compressor: GoXlrDisplayMode
+      equaliser: GoXlrDisplayMode
+      equaliser_fine: GoXlrDisplayMode
     }
     mute_hold_duration: number
     vc_mute_also_mute_cm: boolean

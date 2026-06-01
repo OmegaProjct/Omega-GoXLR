@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.6] - 2026-06-01
+
+### English
+
+#### Added
+- **Mic dynamics control workflow**: Added live controls for gate enable state, threshold, attenuation, attack, and release, plus compressor threshold, ratio, attack, release, and makeup gain.
+- **Display mode editing**: Added editable display modes for gate, compressor, equaliser, and fine equaliser handling inside the Settings workspace.
+
+#### Changed
+- **Bridge expansion for microphone processing**: The Electron bridge now supports deeper microphone processing commands covering gate, compressor, and display-mode updates.
+- **Typed mic model growth**: Shared TypeScript models now capture gate timing, compressor timing/ratio values, and display-mode enums so the renderer can safely work against daemon state.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Mic-Dynamics-Workflow**: Live-Steuerung fuer Gate-Aktivierung, Threshold, Attenuation, Attack und Release sowie fuer Compressor-Threshold, Ratio, Attack, Release und Makeup-Gain.
+- **Bearbeitbare Display-Modi**: Die Display-Modi fuer Gate, Compressor, Equaliser und Fine-Equaliser lassen sich jetzt direkt im Settings-Arbeitsbereich umstellen.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Mikrofon-Processing**: Die Electron-Bridge unterstuetzt jetzt tiefere Mikrofonbefehle fuer Gate, Compressor und Display-Mode-Aenderungen.
+- **Groesseres typisiertes Mic-Modell**: Die gemeinsamen TypeScript-Modelle decken jetzt Gate-Timings, Compressor-Timings/Ratio-Werte und Display-Mode-Enums ab, damit der Renderer sicher gegen den Daemon-Zustand arbeiten kann.
+
 ## [0.1.5] - 2026-06-01
 
 ### English

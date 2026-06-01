@@ -3,9 +3,14 @@ import type {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrCompressorAttackTime,
+  GoXlrCompressorRatio,
+  GoXlrCompressorReleaseTime,
+  GoXlrDisplayMode,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGateTime,
   GoXlrGenderStyle,
   GoXlrHardTuneSource,
   GoXlrHardTuneStyle,
@@ -86,6 +91,116 @@ const PATH_OPTIONS: GoXlrPathType[] = ['Profiles', 'MicProfiles', 'Presets', 'Sa
 const SUBMIX_CHANNELS = ['Mic', 'LineIn', 'Console', 'System', 'Game', 'Chat', 'Sample', 'Music'] as const
 const MIX_OPTIONS: GoXlrMix[] = ['A', 'B']
 const VOD_OPTIONS: GoXlrVodMode[] = ['Routable', 'StreamNoMusic']
+const GATE_TIMES: GoXlrGateTime[] = [
+  'Gate10ms',
+  'Gate20ms',
+  'Gate30ms',
+  'Gate40ms',
+  'Gate50ms',
+  'Gate60ms',
+  'Gate70ms',
+  'Gate80ms',
+  'Gate90ms',
+  'Gate100ms',
+  'Gate110ms',
+  'Gate120ms',
+  'Gate130ms',
+  'Gate140ms',
+  'Gate150ms',
+  'Gate160ms',
+  'Gate170ms',
+  'Gate180ms',
+  'Gate190ms',
+  'Gate200ms',
+  'Gate250ms',
+  'Gate300ms',
+  'Gate350ms',
+  'Gate400ms',
+  'Gate450ms',
+  'Gate500ms',
+  'Gate550ms',
+  'Gate600ms',
+  'Gate650ms',
+  'Gate700ms',
+  'Gate750ms',
+  'Gate800ms',
+  'Gate850ms',
+  'Gate900ms',
+  'Gate950ms',
+  'Gate1000ms',
+  'Gate1100ms',
+  'Gate1200ms',
+  'Gate1300ms',
+  'Gate1400ms',
+  'Gate1500ms',
+  'Gate1600ms',
+  'Gate1700ms',
+  'Gate1800ms',
+  'Gate1900ms',
+  'Gate2000ms'
+]
+const COMPRESSOR_RATIOS: GoXlrCompressorRatio[] = [
+  'Ratio1_0',
+  'Ratio1_1',
+  'Ratio1_2',
+  'Ratio1_4',
+  'Ratio1_6',
+  'Ratio1_8',
+  'Ratio2_0',
+  'Ratio2_5',
+  'Ratio3_2',
+  'Ratio4_0',
+  'Ratio5_6',
+  'Ratio8_0',
+  'Ratio16_0',
+  'Ratio32_0',
+  'Ratio64_0'
+]
+const COMPRESSOR_ATTACK_TIMES: GoXlrCompressorAttackTime[] = [
+  'Comp0ms',
+  'Comp2ms',
+  'Comp3ms',
+  'Comp4ms',
+  'Comp5ms',
+  'Comp6ms',
+  'Comp7ms',
+  'Comp8ms',
+  'Comp9ms',
+  'Comp10ms',
+  'Comp12ms',
+  'Comp14ms',
+  'Comp16ms',
+  'Comp18ms',
+  'Comp20ms',
+  'Comp23ms',
+  'Comp26ms',
+  'Comp30ms',
+  'Comp35ms',
+  'Comp40ms'
+]
+const COMPRESSOR_RELEASE_TIMES: GoXlrCompressorReleaseTime[] = [
+  'Comp0ms',
+  'Comp15ms',
+  'Comp25ms',
+  'Comp35ms',
+  'Comp45ms',
+  'Comp55ms',
+  'Comp65ms',
+  'Comp75ms',
+  'Comp85ms',
+  'Comp100ms',
+  'Comp115ms',
+  'Comp140ms',
+  'Comp170ms',
+  'Comp230ms',
+  'Comp340ms',
+  'Comp680ms',
+  'Comp1000ms',
+  'Comp1500ms',
+  'Comp2000ms',
+  'Comp3000ms'
+]
+const DISPLAY_MODES: GoXlrDisplayMode[] = ['Simple', 'Advanced']
 const EFFECT_PRESETS: GoXlrEffectPreset[] = ['Preset1', 'Preset2', 'Preset3', 'Preset4', 'Preset5', 'Preset6']
 const REVERB_STYLES: GoXlrReverbStyle[] = [
   'Library',
@@ -679,7 +794,7 @@ function App(): JSX.Element {
           <section className="panel">
             <div className="panelHeader">
               <span>Mic setup</span>
-              <span className="muted small">Type, gain and quick status</span>
+              <span className="muted small">Type, gain, gate and compressor control</span>
             </div>
             <div className="micGrid">
               <label className="micCard">
@@ -781,22 +896,248 @@ function App(): JSX.Element {
                 </label>
               ))}
 
-              <div className="micCard infoCard">
-                <span>Gate</span>
-                <strong>{selectedMixer.mic_status.noise_gate.enabled ? 'Enabled' : 'Disabled'}</strong>
-                <p className="muted small">
-                  Threshold {selectedMixer.mic_status.noise_gate.threshold}, attenuation{' '}
-                  {selectedMixer.mic_status.noise_gate.attenuation}
-                </p>
+              <div className="micCard">
+                <div className="panelHeader">
+                  <span>Gate</span>
+                  <label className="inlineToggle">
+                    <span>{selectedMixer.mic_status.noise_gate.enabled ? 'On' : 'Off'}</span>
+                    <input
+                      type="checkbox"
+                      checked={selectedMixer.mic_status.noise_gate.enabled}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () => window.goxlrApi.setGateActive(selectedSerial, event.target.checked),
+                          'Gate state updated'
+                        )
+                      }}
+                    />
+                  </label>
+                </div>
+                <label className="sliderCard">
+                  <div className="sliderHeader">
+                    <span>Threshold</span>
+                    <strong>{selectedMixer.mic_status.noise_gate.threshold}</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min={-59}
+                    max={0}
+                    value={selectedMixer.mic_status.noise_gate.threshold}
+                    disabled={busy || !selectedSerial}
+                    onMouseUp={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setGateThreshold(
+                            selectedSerial,
+                            Number((event.target as HTMLInputElement).value)
+                          ),
+                        'Gate threshold updated'
+                      )
+                    }}
+                  />
+                </label>
+                <label className="sliderCard">
+                  <div className="sliderHeader">
+                    <span>Attenuation</span>
+                    <strong>{selectedMixer.mic_status.noise_gate.attenuation}</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={selectedMixer.mic_status.noise_gate.attenuation}
+                    disabled={busy || !selectedSerial}
+                    onMouseUp={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setGateAttenuation(
+                            selectedSerial,
+                            Number((event.target as HTMLInputElement).value)
+                          ),
+                        'Gate attenuation updated'
+                      )
+                    }}
+                  />
+                </label>
+                <label>
+                  <span className="muted small">Attack</span>
+                  <select
+                    value={selectedMixer.mic_status.noise_gate.attack}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setGateAttack(
+                            selectedSerial,
+                            event.target.value as GoXlrGateTime
+                          ),
+                        'Gate attack updated'
+                      )
+                    }}
+                  >
+                    {GATE_TIMES.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span className="muted small">Release</span>
+                  <select
+                    value={selectedMixer.mic_status.noise_gate.release}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setGateRelease(
+                            selectedSerial,
+                            event.target.value as GoXlrGateTime
+                          ),
+                        'Gate release updated'
+                      )
+                    }}
+                  >
+                    {GATE_TIMES.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
-              <div className="micCard infoCard">
-                <span>Compressor</span>
-                <strong>{selectedMixer.mic_status.compressor.ratio}</strong>
-                <p className="muted small">
-                  Threshold {selectedMixer.mic_status.compressor.threshold}, makeup{' '}
-                  {selectedMixer.mic_status.compressor.makeup_gain}
-                </p>
+              <div className="micCard">
+                <div className="panelHeader">
+                  <span>Compressor</span>
+                  <strong>{selectedMixer.mic_status.compressor.ratio}</strong>
+                </div>
+                <label className="sliderCard">
+                  <div className="sliderHeader">
+                    <span>Threshold</span>
+                    <strong>{selectedMixer.mic_status.compressor.threshold}</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min={-40}
+                    max={0}
+                    value={selectedMixer.mic_status.compressor.threshold}
+                    disabled={busy || !selectedSerial}
+                    onMouseUp={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setCompressorThreshold(
+                            selectedSerial,
+                            Number((event.target as HTMLInputElement).value)
+                          ),
+                        'Compressor threshold updated'
+                      )
+                    }}
+                  />
+                </label>
+                <label className="sliderCard">
+                  <div className="sliderHeader">
+                    <span>Makeup gain</span>
+                    <strong>{selectedMixer.mic_status.compressor.makeup_gain}</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={24}
+                    value={selectedMixer.mic_status.compressor.makeup_gain}
+                    disabled={busy || !selectedSerial}
+                    onMouseUp={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setCompressorMakeupGain(
+                            selectedSerial,
+                            Number((event.target as HTMLInputElement).value)
+                          ),
+                        'Compressor makeup gain updated'
+                      )
+                    }}
+                  />
+                </label>
+                <label>
+                  <span className="muted small">Ratio</span>
+                  <select
+                    value={selectedMixer.mic_status.compressor.ratio}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setCompressorRatio(
+                            selectedSerial,
+                            event.target.value as GoXlrCompressorRatio
+                          ),
+                        'Compressor ratio updated'
+                      )
+                    }}
+                  >
+                    {COMPRESSOR_RATIOS.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span className="muted small">Attack</span>
+                  <select
+                    value={selectedMixer.mic_status.compressor.attack}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setCompressorAttack(
+                            selectedSerial,
+                            event.target.value as GoXlrCompressorAttackTime
+                          ),
+                        'Compressor attack updated'
+                      )
+                    }}
+                  >
+                    {COMPRESSOR_ATTACK_TIMES.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span className="muted small">Release</span>
+                  <select
+                    value={selectedMixer.mic_status.compressor.release}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.setCompressorRelease(
+                            selectedSerial,
+                            event.target.value as GoXlrCompressorReleaseTime
+                          ),
+                        'Compressor release updated'
+                      )
+                    }}
+                  >
+                    {COMPRESSOR_RELEASE_TIMES.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
             </div>
           </section>
@@ -1685,16 +2026,106 @@ function App(): JSX.Element {
               <div className="profileCard">
                 <span>Display modes</span>
                 <div className="stack compact">
-                  <p className="muted small">Gate: {selectedMixer.settings.display.gate}</p>
-                  <p className="muted small">
-                    Compressor: {selectedMixer.settings.display.compressor}
-                  </p>
-                  <p className="muted small">
-                    Equaliser: {selectedMixer.settings.display.equaliser}
-                  </p>
-                  <p className="muted small">
-                    Equaliser fine: {selectedMixer.settings.display.equaliser_fine}
-                  </p>
+                  <label>
+                    <span className="muted small">Gate display</span>
+                    <select
+                      value={selectedMixer.settings.display.gate}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () =>
+                            window.goxlrApi.setDisplayMode(
+                              selectedSerial,
+                              'NoiseGate',
+                              event.target.value as GoXlrDisplayMode
+                            ),
+                          'Gate display mode updated'
+                        )
+                      }}
+                    >
+                      {DISPLAY_MODES.map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span className="muted small">Compressor display</span>
+                    <select
+                      value={selectedMixer.settings.display.compressor}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () =>
+                            window.goxlrApi.setDisplayMode(
+                              selectedSerial,
+                              'Compressor',
+                              event.target.value as GoXlrDisplayMode
+                            ),
+                          'Compressor display mode updated'
+                        )
+                      }}
+                    >
+                      {DISPLAY_MODES.map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span className="muted small">Equaliser display</span>
+                    <select
+                      value={selectedMixer.settings.display.equaliser}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () =>
+                            window.goxlrApi.setDisplayMode(
+                              selectedSerial,
+                              'Equaliser',
+                              event.target.value as GoXlrDisplayMode
+                            ),
+                          'Equaliser display mode updated'
+                        )
+                      }}
+                    >
+                      {DISPLAY_MODES.map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span className="muted small">Equaliser fine display</span>
+                    <select
+                      value={selectedMixer.settings.display.equaliser_fine}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () =>
+                            window.goxlrApi.setDisplayMode(
+                              selectedSerial,
+                              'EqFineTune',
+                              event.target.value as GoXlrDisplayMode
+                            ),
+                          'Equaliser fine display mode updated'
+                        )
+                      }}
+                    >
+                      {DISPLAY_MODES.map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
               </div>
             </div>

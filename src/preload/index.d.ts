@@ -2,9 +2,14 @@ import type {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrCompressorAttackTime,
+  GoXlrCompressorRatio,
+  GoXlrCompressorReleaseTime,
+  GoXlrDisplayMode,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGateTime,
   GoXlrGenderStyle,
   GoXlrHardTuneSource,
   GoXlrHardTuneStyle,
@@ -47,6 +52,27 @@ export interface GoXlrBridge {
     serial: string,
     microphoneType: GoXlrMicrophoneType,
     gain: number
+  ) => Promise<GoXlrAppState>
+  setGateThreshold: (serial: string, value: number) => Promise<GoXlrAppState>
+  setGateAttenuation: (serial: string, value: number) => Promise<GoXlrAppState>
+  setGateAttack: (serial: string, value: GoXlrGateTime) => Promise<GoXlrAppState>
+  setGateRelease: (serial: string, value: GoXlrGateTime) => Promise<GoXlrAppState>
+  setGateActive: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setCompressorThreshold: (serial: string, value: number) => Promise<GoXlrAppState>
+  setCompressorRatio: (serial: string, value: GoXlrCompressorRatio) => Promise<GoXlrAppState>
+  setCompressorAttack: (
+    serial: string,
+    value: GoXlrCompressorAttackTime
+  ) => Promise<GoXlrAppState>
+  setCompressorRelease: (
+    serial: string,
+    value: GoXlrCompressorReleaseTime
+  ) => Promise<GoXlrAppState>
+  setCompressorMakeupGain: (serial: string, value: number) => Promise<GoXlrAppState>
+  setDisplayMode: (
+    serial: string,
+    component: 'NoiseGate' | 'Equaliser' | 'Compressor' | 'EqFineTune',
+    mode: GoXlrDisplayMode
   ) => Promise<GoXlrAppState>
   loadProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   saveProfile: (serial: string) => Promise<GoXlrAppState>

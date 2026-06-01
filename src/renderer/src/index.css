@@ -381,6 +381,14 @@ h2 {
   gap: 14px;
 }
 
+.inlineToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #94a0b6;
+  font-size: 0.9rem;
+}
+
 .wideCard {
   align-items: stretch;
   flex-direction: column;

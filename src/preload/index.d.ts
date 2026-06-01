@@ -6,6 +6,7 @@ import type {
   GoXlrCompressorRatio,
   GoXlrCompressorReleaseTime,
   GoXlrDisplayMode,
+  GoXlrEqFrequency,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
@@ -15,6 +16,7 @@ import type {
   GoXlrHardTuneStyle,
   GoXlrInputDevice,
   GoXlrMix,
+  GoXlrMiniEqFrequency,
   GoXlrMegaphoneStyle,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
@@ -73,6 +75,26 @@ export interface GoXlrBridge {
     serial: string,
     component: 'NoiseGate' | 'Equaliser' | 'Compressor' | 'EqFineTune',
     mode: GoXlrDisplayMode
+  ) => Promise<GoXlrAppState>
+  setEqMiniGain: (
+    serial: string,
+    frequency: GoXlrMiniEqFrequency,
+    value: number
+  ) => Promise<GoXlrAppState>
+  setEqMiniFreq: (
+    serial: string,
+    frequency: GoXlrMiniEqFrequency,
+    value: number
+  ) => Promise<GoXlrAppState>
+  setEqGain: (
+    serial: string,
+    frequency: GoXlrEqFrequency,
+    value: number
+  ) => Promise<GoXlrAppState>
+  setEqFreq: (
+    serial: string,
+    frequency: GoXlrEqFrequency,
+    value: number
   ) => Promise<GoXlrAppState>
   loadProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   saveProfile: (serial: string) => Promise<GoXlrAppState>

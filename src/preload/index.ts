@@ -36,6 +36,14 @@ const api = {
     ipcRenderer.invoke('goxlr:set-compressor-makeup-gain', { serial, value }),
   setDisplayMode: (serial: string, component: string, mode: string) =>
     ipcRenderer.invoke('goxlr:set-display-mode', { serial, component, mode }),
+  setEqMiniGain: (serial: string, frequency: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-eq-mini-gain', { serial, frequency, value }),
+  setEqMiniFreq: (serial: string, frequency: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-eq-mini-freq', { serial, frequency, value }),
+  setEqGain: (serial: string, frequency: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-eq-gain', { serial, frequency, value }),
+  setEqFreq: (serial: string, frequency: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-eq-freq', { serial, frequency, value }),
   loadProfile: (serial: string, profileName: string) =>
     ipcRenderer.invoke('goxlr:load-profile', { serial, profileName }),
   saveProfile: (serial: string) => ipcRenderer.invoke('goxlr:save-profile', { serial }),

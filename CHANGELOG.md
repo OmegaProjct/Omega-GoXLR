@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.7] - 2026-06-01
+
+### English
+
+#### Added
+- **Equalizer control workflow**: Added editable mini and full EQ sections in the Mic workspace with per-band gain and center-frequency control.
+- **Typed EQ support**: Added typed full-size and mini EQ frequency models so the renderer can safely address the daemon's mic-profile EQ structures.
+
+#### Changed
+- **Bridge expansion for mic EQ editing**: The Electron bridge now supports full EQ gain/frequency changes and mini EQ gain/frequency changes.
+- **Mic workspace coverage growth**: The Mic workspace now covers mic type, gain, gate, compressor, and EQ adjustment in one place instead of splitting read-only and editable areas.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Equalizer-Workflow**: Bearbeitbare Mini- und Full-EQ-Bereiche im Mic-Arbeitsbereich mit Gain- und Center-Frequency-Steuerung pro Band.
+- **Typisierte EQ-Unterstuetzung**: Typisierte Modelle fuer Full- und Mini-EQ-Frequenzen, damit der Renderer sicher gegen die EQ-Strukturen des Daemons arbeiten kann.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Mic-EQ-Bearbeitung**: Die Electron-Bridge unterstuetzt jetzt Full-EQ-Gain/Frequency-Aenderungen sowie Mini-EQ-Gain/Frequency-Aenderungen.
+- **Groessere Mic-Arbeitsbereich-Abdeckung**: Der Mic-Arbeitsbereich deckt jetzt Mikrofontyp, Gain, Gate, Compressor und EQ-Anpassung an einer Stelle ab, statt editierbare und reine Anzeige-Bereiche zu trennen.
+
 ## [0.1.6] - 2026-06-01
 
 ### English

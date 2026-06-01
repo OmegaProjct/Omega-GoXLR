@@ -150,6 +150,24 @@ export type GoXlrCompressorReleaseTime =
   | 'Comp2000ms'
   | 'Comp3000ms'
 export type GoXlrDisplayMode = 'Simple' | 'Advanced'
+export type GoXlrMiniEqFrequency =
+  | 'Equalizer90Hz'
+  | 'Equalizer250Hz'
+  | 'Equalizer500Hz'
+  | 'Equalizer1KHz'
+  | 'Equalizer3KHz'
+  | 'Equalizer8KHz'
+export type GoXlrEqFrequency =
+  | 'Equalizer31Hz'
+  | 'Equalizer63Hz'
+  | 'Equalizer125Hz'
+  | 'Equalizer250Hz'
+  | 'Equalizer500Hz'
+  | 'Equalizer1KHz'
+  | 'Equalizer2KHz'
+  | 'Equalizer4KHz'
+  | 'Equalizer8KHz'
+  | 'Equalizer16KHz'
 export type GoXlrReverbStyle =
   | 'Library'
   | 'DarkBloom'
@@ -283,6 +301,14 @@ export type MixerStatus = {
   mic_status: {
     mic_type: GoXlrMicrophoneType
     mic_gains: Record<GoXlrMicrophoneType, number>
+    equaliser: {
+      gain: Record<GoXlrEqFrequency, number>
+      frequency: Record<GoXlrEqFrequency, number>
+    }
+    equaliser_mini: {
+      gain: Record<GoXlrMiniEqFrequency, number>
+      frequency: Record<GoXlrMiniEqFrequency, number>
+    }
     noise_gate: {
       threshold: number
       attack: GoXlrGateTime

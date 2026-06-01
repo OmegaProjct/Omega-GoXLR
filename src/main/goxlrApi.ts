@@ -6,6 +6,7 @@ import {
   GoXlrCompressorRatio,
   GoXlrCompressorReleaseTime,
   GoXlrDisplayMode,
+  GoXlrEqFrequency,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
@@ -16,6 +17,7 @@ import {
   GoXlrInputDevice,
   GoXlrMegaphoneStyle,
   GoXlrMix,
+  GoXlrMiniEqFrequency,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
@@ -203,6 +205,46 @@ export async function setElementDisplayMode(
 ): Promise<void> {
   await sendMixerCommand(serial, {
     SetElementDisplayMode: [component, mode]
+  })
+}
+
+export async function setEqMiniGain(
+  serial: string,
+  frequency: GoXlrMiniEqFrequency,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEqMiniGain: [frequency, value]
+  })
+}
+
+export async function setEqMiniFreq(
+  serial: string,
+  frequency: GoXlrMiniEqFrequency,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEqMiniFreq: [frequency, value]
+  })
+}
+
+export async function setEqGain(
+  serial: string,
+  frequency: GoXlrEqFrequency,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEqGain: [frequency, value]
+  })
+}
+
+export async function setEqFreq(
+  serial: string,
+  frequency: GoXlrEqFrequency,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEqFreq: [frequency, value]
   })
 }
 

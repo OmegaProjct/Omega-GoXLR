@@ -7,6 +7,7 @@ import type {
   GoXlrCompressorRatio,
   GoXlrCompressorReleaseTime,
   GoXlrDisplayMode,
+  GoXlrEqFrequency,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
@@ -17,6 +18,7 @@ import type {
   GoXlrInputDevice,
   GoXlrMix,
   GoXlrMegaphoneStyle,
+  GoXlrMiniEqFrequency,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
@@ -201,6 +203,26 @@ const COMPRESSOR_RELEASE_TIMES: GoXlrCompressorReleaseTime[] = [
   'Comp3000ms'
 ]
 const DISPLAY_MODES: GoXlrDisplayMode[] = ['Simple', 'Advanced']
+const MINI_EQ_FREQUENCIES: GoXlrMiniEqFrequency[] = [
+  'Equalizer90Hz',
+  'Equalizer250Hz',
+  'Equalizer500Hz',
+  'Equalizer1KHz',
+  'Equalizer3KHz',
+  'Equalizer8KHz'
+]
+const EQ_FREQUENCIES: GoXlrEqFrequency[] = [
+  'Equalizer31Hz',
+  'Equalizer63Hz',
+  'Equalizer125Hz',
+  'Equalizer250Hz',
+  'Equalizer500Hz',
+  'Equalizer1KHz',
+  'Equalizer2KHz',
+  'Equalizer4KHz',
+  'Equalizer8KHz',
+  'Equalizer16KHz'
+]
 const EFFECT_PRESETS: GoXlrEffectPreset[] = ['Preset1', 'Preset2', 'Preset3', 'Preset4', 'Preset5', 'Preset6']
 const REVERB_STYLES: GoXlrReverbStyle[] = [
   'Library',
@@ -291,6 +313,10 @@ function renderValue(value: unknown): string {
     return JSON.stringify(value)
   }
   return String(value)
+}
+
+function formatEqLabel(value: string): string {
+  return value.replace('Equalizer', '')
 }
 
 function App(): JSX.Element {
@@ -1138,6 +1164,136 @@ function App(): JSX.Element {
                     ))}
                   </select>
                 </label>
+              </div>
+
+              <div className="micCard">
+                <div className="panelHeader">
+                  <span>EQ mini</span>
+                  <span className="muted small">Compact six-band control</span>
+                </div>
+                <div className="stack compact">
+                  {MINI_EQ_FREQUENCIES.map((frequency) => (
+                    <div key={frequency} className="sampleEditor">
+                      <div className="sampleRow">
+                        <strong>{formatEqLabel(frequency)}</strong>
+                        <span>
+                          Gain {selectedMixer.mic_status.equaliser_mini.gain[frequency]} | Freq{' '}
+                          {selectedMixer.mic_status.equaliser_mini.frequency[frequency]}
+                        </span>
+                      </div>
+                      <div className="sampleTrimGrid">
+                        <label>
+                          <span className="muted small">Gain</span>
+                          <input
+                            type="range"
+                            min={-9}
+                            max={9}
+                            value={selectedMixer.mic_status.equaliser_mini.gain[frequency]}
+                            disabled={busy || !selectedSerial}
+                            onMouseUp={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setEqMiniGain(
+                                    selectedSerial,
+                                    frequency,
+                                    Number((event.target as HTMLInputElement).value)
+                                  ),
+                                `${formatEqLabel(frequency)} mini gain updated`
+                              )
+                            }}
+                          />
+                        </label>
+                        <label>
+                          <span className="muted small">Frequency</span>
+                          <input
+                            type="number"
+                            step={0.1}
+                            defaultValue={selectedMixer.mic_status.equaliser_mini.frequency[frequency]}
+                            disabled={busy || !selectedSerial}
+                            onBlur={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setEqMiniFreq(
+                                    selectedSerial,
+                                    frequency,
+                                    Number((event.target as HTMLInputElement).value)
+                                  ),
+                                `${formatEqLabel(frequency)} mini frequency updated`
+                              )
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="micCard">
+                <div className="panelHeader">
+                  <span>EQ full</span>
+                  <span className="muted small">Ten-band detailed control</span>
+                </div>
+                <div className="stack compact">
+                  {EQ_FREQUENCIES.map((frequency) => (
+                    <div key={frequency} className="sampleEditor">
+                      <div className="sampleRow">
+                        <strong>{formatEqLabel(frequency)}</strong>
+                        <span>
+                          Gain {selectedMixer.mic_status.equaliser.gain[frequency]} | Freq{' '}
+                          {selectedMixer.mic_status.equaliser.frequency[frequency]}
+                        </span>
+                      </div>
+                      <div className="sampleTrimGrid">
+                        <label>
+                          <span className="muted small">Gain</span>
+                          <input
+                            type="range"
+                            min={-9}
+                            max={9}
+                            value={selectedMixer.mic_status.equaliser.gain[frequency]}
+                            disabled={busy || !selectedSerial}
+                            onMouseUp={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setEqGain(
+                                    selectedSerial,
+                                    frequency,
+                                    Number((event.target as HTMLInputElement).value)
+                                  ),
+                                `${formatEqLabel(frequency)} gain updated`
+                              )
+                            }}
+                          />
+                        </label>
+                        <label>
+                          <span className="muted small">Frequency</span>
+                          <input
+                            type="number"
+                            step={0.1}
+                            defaultValue={selectedMixer.mic_status.equaliser.frequency[frequency]}
+                            disabled={busy || !selectedSerial}
+                            onBlur={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setEqFreq(
+                                    selectedSerial,
+                                    frequency,
+                                    Number((event.target as HTMLInputElement).value)
+                                  ),
+                                `${formatEqLabel(frequency)} frequency updated`
+                              )
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>

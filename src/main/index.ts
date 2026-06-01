@@ -5,6 +5,10 @@ import {
   addSampleToButton,
   fetchDaemonStatus,
   removeSampleByIndex,
+  setEqFreq,
+  setEqGain,
+  setEqMiniFreq,
+  setEqMiniGain,
   setCompressorAttack,
   setCompressorMakeupGain,
   setCompressorRatio,
@@ -81,6 +85,7 @@ import {
   GoXlrCompressorRatio,
   GoXlrCompressorReleaseTime,
   GoXlrDisplayMode,
+  GoXlrEqFrequency,
   GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
@@ -90,6 +95,7 @@ import {
   GoXlrHardTuneStyle,
   GoXlrInputDevice,
   GoXlrMix,
+  GoXlrMiniEqFrequency,
   GoXlrMegaphoneStyle,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
@@ -312,6 +318,34 @@ function setupIpc(): void {
       }
     ) => {
       await setElementDisplayMode(payload.serial, payload.component, payload.mode)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-eq-mini-gain',
+    async (_event, payload: { serial: string; frequency: GoXlrMiniEqFrequency; value: number }) => {
+      await setEqMiniGain(payload.serial, payload.frequency, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-eq-mini-freq',
+    async (_event, payload: { serial: string; frequency: GoXlrMiniEqFrequency; value: number }) => {
+      await setEqMiniFreq(payload.serial, payload.frequency, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-eq-gain',
+    async (_event, payload: { serial: string; frequency: GoXlrEqFrequency; value: number }) => {
+      await setEqGain(payload.serial, payload.frequency, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-eq-freq',
+    async (_event, payload: { serial: string; frequency: GoXlrEqFrequency; value: number }) => {
+      await setEqFreq(payload.serial, payload.frequency, payload.value)
       return buildAppState()
     }
   )

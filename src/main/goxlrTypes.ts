@@ -44,6 +44,23 @@ export type GoXlrMicrophoneType = 'Dynamic' | 'Condenser' | 'Jack'
 export type GoXlrMix = 'A' | 'B'
 export type GoXlrEffectPreset = 'Preset1' | 'Preset2' | 'Preset3' | 'Preset4' | 'Preset5' | 'Preset6'
 export type GoXlrVodMode = 'Routable' | 'StreamNoMusic'
+export type GoXlrAnimationMode =
+  | 'RetroRainbow'
+  | 'RainbowDark'
+  | 'RainbowBright'
+  | 'Simple'
+  | 'Ripple'
+  | 'None'
+export type GoXlrWaterfallDirection = 'Down' | 'Up' | 'Off'
+export type GoXlrSimpleColourTarget =
+  | 'Global'
+  | 'Accent'
+  | 'Scribble1'
+  | 'Scribble2'
+  | 'Scribble3'
+  | 'Scribble4'
+export type GoXlrSampleBank = 'A' | 'B' | 'C'
+export type GoXlrSampleButton = 'TopLeft' | 'TopRight' | 'BottomLeft' | 'BottomRight'
 
 export type GoXlrAppState = {
   daemon: {
@@ -149,6 +166,43 @@ export type MixerStatus = {
     deess: number
   }
   router: Record<GoXlrInputDevice, Record<GoXlrOutputDevice, boolean>>
+  lighting: {
+    animation: {
+      supported: boolean
+      mode: GoXlrAnimationMode
+      mod1: number
+      mod2: number
+      waterfall_direction: GoXlrWaterfallDirection
+    }
+    simple: Record<GoXlrSimpleColourTarget, { colour_one: string }>
+  }
+  effects?: {
+    is_enabled: boolean
+    active_preset: GoXlrEffectPreset
+    preset_names: Record<GoXlrEffectPreset, string>
+  } | null
+  sampler?: {
+    active_bank: GoXlrSampleBank
+    clear_active: boolean
+    record_buffer: number
+    processing_state: {
+      progress: number | null
+      last_error: string | null
+    }
+    banks: Record<
+      GoXlrSampleBank,
+      Record<
+        GoXlrSampleButton,
+        {
+          function: string
+          order: string
+          samples: Array<{ name: string; start_pct: number; stop_pct: number }>
+          is_playing: boolean
+          is_recording: boolean
+        }
+      >
+    >
+  } | null
   settings: {
     mute_hold_duration: number
     vc_mute_also_mute_cm: boolean

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type {
+  GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
   GoXlrEffectPreset,
@@ -9,7 +10,11 @@ import type {
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrSampleBank,
+  GoXlrSampleButton,
+  GoXlrSimpleColourTarget,
   GoXlrVodMode,
+  GoXlrWaterfallDirection,
   MixerStatus
 } from '../../main/goxlrTypes'
 
@@ -72,7 +77,36 @@ const SUBMIX_CHANNELS = ['Mic', 'LineIn', 'Console', 'System', 'Game', 'Chat', '
 const MIX_OPTIONS: GoXlrMix[] = ['A', 'B']
 const VOD_OPTIONS: GoXlrVodMode[] = ['Routable', 'StreamNoMusic']
 const EFFECT_PRESETS: GoXlrEffectPreset[] = ['Preset1', 'Preset2', 'Preset3', 'Preset4', 'Preset5', 'Preset6']
-const TABS = ['Overview', 'Faders', 'Routing', 'Mic', 'Submix', 'Profiles', 'Diagnostics'] as const
+const ANIMATION_MODES: GoXlrAnimationMode[] = [
+  'RetroRainbow',
+  'RainbowDark',
+  'RainbowBright',
+  'Simple',
+  'Ripple',
+  'None'
+]
+const WATERFALL_DIRECTIONS: GoXlrWaterfallDirection[] = ['Down', 'Up', 'Off']
+const SIMPLE_COLOUR_TARGETS: GoXlrSimpleColourTarget[] = [
+  'Global',
+  'Accent',
+  'Scribble1',
+  'Scribble2',
+  'Scribble3',
+  'Scribble4'
+]
+const SAMPLE_BANKS: GoXlrSampleBank[] = ['A', 'B', 'C']
+const SAMPLE_BUTTONS: GoXlrSampleButton[] = ['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight']
+const TABS = [
+  'Overview',
+  'Faders',
+  'Routing',
+  'Mic',
+  'Submix',
+  'Profiles',
+  'Lighting',
+  'Sampler',
+  'Diagnostics'
+] as const
 
 type AppTab = (typeof TABS)[number]
 
@@ -109,6 +143,7 @@ function App(): JSX.Element {
   const profileFiles = appState.status?.files.profiles ?? []
   const micProfileFiles = appState.status?.files.mic_profiles ?? []
   const presetFiles = appState.status?.files.presets ?? []
+  const activeSamplerBank = selectedMixer?.sampler?.active_bank ?? 'A'
 
   const deviceFacts = useMemo(() => {
     if (!selectedMixer) {
@@ -1069,6 +1104,235 @@ function App(): JSX.Element {
                 </div>
               </div>
             </div>
+          </section>
+        ) : null}
+
+        {selectedMixer && selectedTab === 'Lighting' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Lighting</span>
+              <span className="muted small">Animation and primary color control</span>
+            </div>
+            <div className="lightingGrid">
+              <label className="micCard">
+                <span>Animation mode</span>
+                <select
+                  value={selectedMixer.lighting.animation.mode}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setAnimationMode(
+                          selectedSerial,
+                          event.target.value as GoXlrAnimationMode
+                        ),
+                      'Animation mode updated'
+                    )
+                  }}
+                >
+                  {ANIMATION_MODES.map((mode) => (
+                    <option key={mode} value={mode}>
+                      {mode}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="micCard">
+                <span>Waterfall</span>
+                <select
+                  value={selectedMixer.lighting.animation.waterfall_direction}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setAnimationWaterfall(
+                          selectedSerial,
+                          event.target.value as GoXlrWaterfallDirection
+                        ),
+                      'Waterfall direction updated'
+                    )
+                  }}
+                >
+                  {WATERFALL_DIRECTIONS.map((direction) => (
+                    <option key={direction} value={direction}>
+                      {direction}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>Animation mod 1</span>
+                  <strong>{selectedMixer.lighting.animation.mod1}</strong>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={selectedMixer.lighting.animation.mod1}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setAnimationMod1(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'Animation mod 1 updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>Animation mod 2</span>
+                  <strong>{selectedMixer.lighting.animation.mod2}</strong>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={selectedMixer.lighting.animation.mod2}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setAnimationMod2(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'Animation mod 2 updated'
+                    )
+                  }}
+                />
+              </label>
+            </div>
+
+            <div className="colorGrid">
+              {SIMPLE_COLOUR_TARGETS.map((target) => (
+                <label key={target} className="colorCard">
+                  <span>{target}</span>
+                  <input
+                    type="color"
+                    value={selectedMixer.lighting.simple[target]?.colour_one ?? '#ffffff'}
+                    disabled={busy || !selectedSerial}
+                    onChange={(event) => {
+                      if (!selectedSerial) return
+                      void runAction(
+                        () => window.goxlrApi.setSimpleColour(selectedSerial, target, event.target.value),
+                        `${target} color updated`
+                      )
+                    }}
+                  />
+                  <code>{selectedMixer.lighting.simple[target]?.colour_one ?? '#ffffff'}</code>
+                </label>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {selectedMixer && selectedTab === 'Sampler' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Sampler</span>
+              <span className="muted small">Bank control and sample triggering</span>
+            </div>
+
+            <div className="samplerHeader">
+              <label className="micCard">
+                <span>Active bank</span>
+                <select
+                  value={activeSamplerBank}
+                  disabled={busy || !selectedSerial || !selectedMixer.sampler}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setSamplerBank(selectedSerial, event.target.value as GoXlrSampleBank),
+                      'Sampler bank updated'
+                    )
+                  }}
+                >
+                  {SAMPLE_BANKS.map((bank) => (
+                    <option key={bank} value={bank}>
+                      Bank {bank}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="profileCard">
+                <span>Processing state</span>
+                <p className="muted small">
+                  Progress: {renderValue(selectedMixer.sampler?.processing_state.progress)}
+                </p>
+                <p className="muted small">
+                  Last error: {renderValue(selectedMixer.sampler?.processing_state.last_error)}
+                </p>
+                <p className="muted small">
+                  Record buffer: {renderValue(selectedMixer.sampler?.record_buffer)}
+                </p>
+              </div>
+            </div>
+
+            {selectedMixer.sampler ? (
+              <div className="samplerGrid">
+                {SAMPLE_BUTTONS.map((button) => {
+                  const buttonData = selectedMixer.sampler?.banks[activeSamplerBank]?.[button]
+                  return (
+                    <div key={button} className="profileCard">
+                      <div className="panelHeader">
+                        <span>{button}</span>
+                        <span className="muted small">{buttonData?.samples.length ?? 0} samples</span>
+                      </div>
+                      <p className="muted small">Mode: {buttonData?.function ?? 'n/a'}</p>
+                      <p className="muted small">Order: {buttonData?.order ?? 'n/a'}</p>
+                      <p className="muted small">
+                        Playing: {buttonData?.is_playing ? 'yes' : 'no'} | Recording:{' '}
+                        {buttonData?.is_recording ? 'yes' : 'no'}
+                      </p>
+                      <div className="buttonRow tight">
+                        <button
+                          disabled={busy || !selectedSerial}
+                          onClick={() => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () => window.goxlrApi.playNextSample(selectedSerial, activeSamplerBank, button),
+                              `${button} triggered`
+                            )
+                          }}
+                        >
+                          Play next
+                        </button>
+                        <button
+                          className="ghost"
+                          disabled={busy || !selectedSerial}
+                          onClick={() => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () => window.goxlrApi.stopSample(selectedSerial, activeSamplerBank, button),
+                              `${button} stopped`
+                            )
+                          }}
+                        >
+                          Stop
+                        </button>
+                      </div>
+                      <div className="sampleList">
+                        {(buttonData?.samples ?? []).map((sample, index) => (
+                          <div key={`${button}-${index}`} className="sampleRow">
+                            <strong>{sample.name}</strong>
+                            <span>
+                              {sample.start_pct}% - {sample.stop_pct}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <p className="muted">No sampler data available for this mixer.</p>
+            )}
           </section>
         ) : null}
       </main>

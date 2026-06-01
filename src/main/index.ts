@@ -6,10 +6,16 @@ import {
   loadMicProfile,
   loadProfile,
   openPath,
+  playNextSample,
   saveMicProfile,
   saveProfile,
   saveActivePreset,
+  setActiveSamplerBank,
   setActiveEffectPreset,
+  setAnimationMod1,
+  setAnimationMod2,
+  setAnimationMode,
+  setAnimationWaterfall,
   setBleepLevel,
   setChannelVolume,
   setDeEsser,
@@ -19,7 +25,9 @@ import {
   setMonitorWithFx,
   setMicrophoneGain,
   setMicrophoneType,
+  setSimpleColour,
   setRouterEntry,
+  stopSamplePlayback,
   setSubmixEnabled,
   setSubmixLinked,
   setSubmixOutputMix,
@@ -27,6 +35,7 @@ import {
   setVodMode
 } from './goxlrApi'
 import {
+  GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
   GoXlrEffectPreset,
@@ -36,7 +45,12 @@ import {
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrSampleBank,
+  GoXlrSampleButton,
+  GoXlrSimpleColourTarget,
   GoXlrVodMode
+  ,
+  GoXlrWaterfallDirection
 } from './goxlrTypes'
 
 const appDataPath = app.getPath('appData')
@@ -299,6 +313,63 @@ function setupIpc(): void {
     await saveActivePreset(payload.serial)
     return buildAppState()
   })
+
+  ipcMain.handle(
+    'goxlr:set-animation-mode',
+    async (_event, payload: { serial: string; mode: GoXlrAnimationMode }) => {
+      await setAnimationMode(payload.serial, payload.mode)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-animation-mod1',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setAnimationMod1(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-animation-mod2',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setAnimationMod2(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-animation-waterfall',
+    async (_event, payload: { serial: string; direction: GoXlrWaterfallDirection }) => {
+      await setAnimationWaterfall(payload.serial, payload.direction)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-simple-colour',
+    async (_event, payload: { serial: string; target: GoXlrSimpleColourTarget; colour: string }) => {
+      await setSimpleColour(payload.serial, payload.target, payload.colour)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sampler-bank',
+    async (_event, payload: { serial: string; bank: GoXlrSampleBank }) => {
+      await setActiveSamplerBank(payload.serial, payload.bank)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:play-next-sample',
+    async (_event, payload: { serial: string; bank: GoXlrSampleBank; button: GoXlrSampleButton }) => {
+      await playNextSample(payload.serial, payload.bank, payload.button)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:stop-sample',
+    async (_event, payload: { serial: string; bank: GoXlrSampleBank; button: GoXlrSampleButton }) => {
+      await stopSamplePlayback(payload.serial, payload.bank, payload.button)
+      return buildAppState()
+    }
+  )
 }
 
 app.whenReady().then(async () => {

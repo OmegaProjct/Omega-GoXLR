@@ -1,4 +1,5 @@
 import {
+  GoXlrAnimationMode,
   DaemonStatus,
   GoXlrChannelName,
   GoXlrEffectPreset,
@@ -8,7 +9,12 @@ import {
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrSampleBank,
+  GoXlrSampleButton,
+  GoXlrSimpleColourTarget,
   GoXlrVodMode
+  ,
+  GoXlrWaterfallDirection
 } from './goxlrTypes'
 
 const ENDPOINT = 'http://127.0.0.1:14564'
@@ -216,4 +222,67 @@ export async function setActiveEffectPreset(
 
 export async function saveActivePreset(serial: string): Promise<void> {
   await sendMixerCommand(serial, 'SaveActivePreset')
+}
+
+export async function setAnimationMode(serial: string, mode: GoXlrAnimationMode): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetAnimationMode: mode
+  })
+}
+
+export async function setAnimationMod1(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetAnimationMod1: value
+  })
+}
+
+export async function setAnimationMod2(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetAnimationMod2: value
+  })
+}
+
+export async function setAnimationWaterfall(
+  serial: string,
+  direction: GoXlrWaterfallDirection
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetAnimationWaterfall: direction
+  })
+}
+
+export async function setSimpleColour(
+  serial: string,
+  target: GoXlrSimpleColourTarget,
+  colour: string
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSimpleColour: [target, colour]
+  })
+}
+
+export async function setActiveSamplerBank(serial: string, bank: GoXlrSampleBank): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetActiveSamplerBank: bank
+  })
+}
+
+export async function playNextSample(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    PlayNextSample: [bank, button]
+  })
+}
+
+export async function stopSamplePlayback(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    StopSamplePlayback: [bank, button]
+  })
 }

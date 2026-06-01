@@ -1,4 +1,5 @@
 import type {
+  GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
   GoXlrEffectPreset,
@@ -8,7 +9,12 @@ import type {
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrSampleBank,
+  GoXlrSampleButton,
+  GoXlrSimpleColourTarget,
   GoXlrVodMode
+  ,
+  GoXlrWaterfallDirection
 } from '../main/goxlrTypes'
 
 export interface GoXlrBridge {
@@ -62,6 +68,29 @@ export interface GoXlrBridge {
   setVodMode: (serial: string, mode: GoXlrVodMode) => Promise<GoXlrAppState>
   setEffectPreset: (serial: string, preset: GoXlrEffectPreset) => Promise<GoXlrAppState>
   saveEffectPreset: (serial: string) => Promise<GoXlrAppState>
+  setAnimationMode: (serial: string, mode: GoXlrAnimationMode) => Promise<GoXlrAppState>
+  setAnimationMod1: (serial: string, value: number) => Promise<GoXlrAppState>
+  setAnimationMod2: (serial: string, value: number) => Promise<GoXlrAppState>
+  setAnimationWaterfall: (
+    serial: string,
+    direction: GoXlrWaterfallDirection
+  ) => Promise<GoXlrAppState>
+  setSimpleColour: (
+    serial: string,
+    target: GoXlrSimpleColourTarget,
+    colour: string
+  ) => Promise<GoXlrAppState>
+  setSamplerBank: (serial: string, bank: GoXlrSampleBank) => Promise<GoXlrAppState>
+  playNextSample: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton
+  ) => Promise<GoXlrAppState>
+  stopSample: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton
+  ) => Promise<GoXlrAppState>
 }
 
 declare global {

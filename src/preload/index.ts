@@ -43,7 +43,23 @@ const api = {
     ipcRenderer.invoke('goxlr:set-vod-mode', { serial, mode }),
   setEffectPreset: (serial: string, preset: string) =>
     ipcRenderer.invoke('goxlr:set-effect-preset', { serial, preset }),
-  saveEffectPreset: (serial: string) => ipcRenderer.invoke('goxlr:save-effect-preset', { serial })
+  saveEffectPreset: (serial: string) => ipcRenderer.invoke('goxlr:save-effect-preset', { serial }),
+  setAnimationMode: (serial: string, mode: string) =>
+    ipcRenderer.invoke('goxlr:set-animation-mode', { serial, mode }),
+  setAnimationMod1: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-animation-mod1', { serial, value }),
+  setAnimationMod2: (serial: string, value: number) =>
+    ipcRenderer.invoke('goxlr:set-animation-mod2', { serial, value }),
+  setAnimationWaterfall: (serial: string, direction: string) =>
+    ipcRenderer.invoke('goxlr:set-animation-waterfall', { serial, direction }),
+  setSimpleColour: (serial: string, target: string, colour: string) =>
+    ipcRenderer.invoke('goxlr:set-simple-colour', { serial, target, colour }),
+  setSamplerBank: (serial: string, bank: string) =>
+    ipcRenderer.invoke('goxlr:set-sampler-bank', { serial, bank }),
+  playNextSample: (serial: string, bank: string, button: string) =>
+    ipcRenderer.invoke('goxlr:play-next-sample', { serial, bank, button }),
+  stopSample: (serial: string, bank: string, button: string) =>
+    ipcRenderer.invoke('goxlr:stop-sample', { serial, bank, button })
 }
 
 if (process.contextIsolated) {

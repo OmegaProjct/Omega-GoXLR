@@ -280,7 +280,11 @@ h2 {
 
 .quickControlGrid,
 .outputMixGrid,
-.diagnosticGrid {
+.diagnosticGrid,
+.lightingGrid,
+.colorGrid,
+.samplerGrid,
+.samplerHeader {
   display: grid;
   gap: 14px;
 }
@@ -384,6 +388,52 @@ h2 {
 .diagnosticGrid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   margin-top: 16px;
+}
+
+.lightingGrid,
+.samplerHeader {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-bottom: 16px;
+}
+
+.colorGrid,
+.samplerGrid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.colorCard {
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colorCard input[type='color'] {
+  width: 100%;
+  height: 48px;
+  border: 0;
+  background: transparent;
+}
+
+.sampleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sampleRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #94a0b6;
+  font-size: 0.86rem;
+}
+
+.buttonRow.tight {
+  margin-top: 0;
 }
 
 @media (max-width: 1080px) {

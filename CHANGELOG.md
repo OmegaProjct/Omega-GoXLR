@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.3] - 2026-06-01
+
+### English
+
+#### Added
+- **Lighting workspace**: Added a dedicated Lighting tab with animation mode, waterfall direction, animation modifiers, and core color-target editing.
+- **Sampler workspace**: Added a Sampler tab with active bank switching, per-pad sample listing, play-next triggering, stop actions, and processing-state visibility.
+
+#### Changed
+- **Bridge expansion for media and lighting control**: Added daemon bridge support for animation settings, simple colour targets, sampler bank switching, and sample trigger/stop actions.
+- **Richer device model again**: Mixer typing now includes lighting, effects, and sampler state blocks, allowing broader UI coverage without falling back to untyped payload access.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Lighting-Arbeitsbereich**: Neuer Lighting-Tab mit Animationsmodus, Waterfall-Richtung, Animationsmodifikatoren und zentraler Farbbearbeitung.
+- **Sampler-Arbeitsbereich**: Neuer Sampler-Tab mit Bankwechsel, Sample-Listen pro Pad, Play-Next-Ausloesung, Stop-Aktionen und Sichtbarkeit des Processing-Status.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Medien- und Lighting-Steuerung**: Die Daemon-Bridge unterstuetzt jetzt Animationseinstellungen, einfache Farbtargets, Sampler-Bankwechsel sowie Sample-Trigger- und Stop-Aktionen.
+- **Noch reicheres Geraetemodell**: Das typisierte Mixer-Modell deckt jetzt Lighting-, Effects- und Sampler-Bloecke ab, sodass die UI groessere Teile des Geraets ohne untypisierte Direktzugriffe abbilden kann.
+
 ## [0.1.2] - 2026-06-01
 
 ### English

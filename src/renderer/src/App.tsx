@@ -3,13 +3,21 @@ import type {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGenderStyle,
+  GoXlrHardTuneSource,
+  GoXlrHardTuneStyle,
   GoXlrInputDevice,
   GoXlrMix,
+  GoXlrMegaphoneStyle,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrPitchStyle,
+  GoXlrReverbStyle,
+  GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
   GoXlrSimpleColourTarget,
@@ -77,6 +85,35 @@ const SUBMIX_CHANNELS = ['Mic', 'LineIn', 'Console', 'System', 'Game', 'Chat', '
 const MIX_OPTIONS: GoXlrMix[] = ['A', 'B']
 const VOD_OPTIONS: GoXlrVodMode[] = ['Routable', 'StreamNoMusic']
 const EFFECT_PRESETS: GoXlrEffectPreset[] = ['Preset1', 'Preset2', 'Preset3', 'Preset4', 'Preset5', 'Preset6']
+const REVERB_STYLES: GoXlrReverbStyle[] = [
+  'Library',
+  'DarkBloom',
+  'MusicClub',
+  'RealPlate',
+  'Chapel',
+  'HockeyArena'
+]
+const ECHO_STYLES: GoXlrEchoStyle[] = [
+  'Quarter',
+  'Eighth',
+  'Triplet',
+  'PingPong',
+  'ClassicSlap',
+  'MultiTap'
+]
+const PITCH_STYLES: GoXlrPitchStyle[] = ['Narrow', 'Wide']
+const GENDER_STYLES: GoXlrGenderStyle[] = ['Narrow', 'Medium', 'Wide']
+const MEGAPHONE_STYLES: GoXlrMegaphoneStyle[] = [
+  'Megaphone',
+  'Radio',
+  'OnThePhone',
+  'Overdrive',
+  'BuzzCutt',
+  'Tweed'
+]
+const ROBOT_STYLES: GoXlrRobotStyle[] = ['Robot1', 'Robot2', 'Robot3']
+const HARD_TUNE_STYLES: GoXlrHardTuneStyle[] = ['Natural', 'Medium', 'Hard']
+const HARD_TUNE_SOURCES: GoXlrHardTuneSource[] = ['All', 'Music', 'Game', 'LineIn', 'System']
 const ANIMATION_MODES: GoXlrAnimationMode[] = [
   'RetroRainbow',
   'RainbowDark',
@@ -101,7 +138,9 @@ const TABS = [
   'Faders',
   'Routing',
   'Mic',
+  'Effects',
   'Submix',
+  'Settings',
   'Profiles',
   'Lighting',
   'Sampler',
@@ -893,6 +932,482 @@ function App(): JSX.Element {
           </section>
         ) : null}
 
+        {selectedMixer && selectedTab === 'Effects' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Effects</span>
+              <span className="muted small">Realtime voice processing and character controls</span>
+            </div>
+
+            {selectedMixer.effects ? (
+              <>
+                <div className="submixHeader">
+                  <label className="toggleCard">
+                    <span>FX enabled</span>
+                    <input
+                      type="checkbox"
+                      checked={selectedMixer.effects.is_enabled}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () => window.goxlrApi.setFxEnabled(selectedSerial, event.target.checked),
+                          'FX engine updated'
+                        )
+                      }}
+                    />
+                  </label>
+                  <label className="toggleCard">
+                    <span>Megaphone</span>
+                    <input
+                      type="checkbox"
+                      checked={selectedMixer.effects.current.megaphone.is_enabled}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () => window.goxlrApi.setMegaphoneEnabled(selectedSerial, event.target.checked),
+                          'Megaphone updated'
+                        )
+                      }}
+                    />
+                  </label>
+                  <label className="toggleCard">
+                    <span>Robot</span>
+                    <input
+                      type="checkbox"
+                      checked={selectedMixer.effects.current.robot.is_enabled}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () => window.goxlrApi.setRobotEnabled(selectedSerial, event.target.checked),
+                          'Robot updated'
+                        )
+                      }}
+                    />
+                  </label>
+                  <label className="toggleCard">
+                    <span>Hard tune</span>
+                    <input
+                      type="checkbox"
+                      checked={selectedMixer.effects.current.hard_tune.is_enabled}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) return
+                        void runAction(
+                          () => window.goxlrApi.setHardTuneEnabled(selectedSerial, event.target.checked),
+                          'Hard tune updated'
+                        )
+                      }}
+                    />
+                  </label>
+                </div>
+
+                <div className="profileGrid">
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Reverb</span>
+                      <span className="muted small">Raw {selectedMixer.effects.current.reverb.raw_encoder}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.reverb.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setReverbStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrReverbStyle
+                              ),
+                            'Reverb style updated'
+                          )
+                        }}
+                      >
+                        {REVERB_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.reverb.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={selectedMixer.effects.current.reverb.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setReverbAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Reverb amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                      <p className="muted small">
+                        Decay {selectedMixer.effects.current.reverb.decay} | Pre-delay{' '}
+                        {selectedMixer.effects.current.reverb.pre_delay}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Echo</span>
+                      <span className="muted small">Raw {selectedMixer.effects.current.echo.raw_encoder}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.echo.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setEchoStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrEchoStyle
+                              ),
+                            'Echo style updated'
+                          )
+                        }}
+                      >
+                        {ECHO_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.echo.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={selectedMixer.effects.current.echo.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setEchoAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Echo amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                      <p className="muted small">
+                        Tempo {selectedMixer.effects.current.echo.tempo} | Feedback{' '}
+                        {selectedMixer.effects.current.echo.feedback}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Pitch</span>
+                      <span className="muted small">Raw {selectedMixer.effects.current.pitch.raw_encoder}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.pitch.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setPitchStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrPitchStyle
+                              ),
+                            'Pitch style updated'
+                          )
+                        }}
+                      >
+                        {PITCH_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.pitch.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={-24}
+                          max={24}
+                          value={selectedMixer.effects.current.pitch.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setPitchAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Pitch amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                      <p className="muted small">
+                        Character {selectedMixer.effects.current.pitch.character}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Gender</span>
+                      <span className="muted small">Raw {selectedMixer.effects.current.gender.raw_encoder}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.gender.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setGenderStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrGenderStyle
+                              ),
+                            'Gender style updated'
+                          )
+                        }}
+                      >
+                        {GENDER_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.gender.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={-50}
+                          max={50}
+                          value={selectedMixer.effects.current.gender.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setGenderAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Gender amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Megaphone</span>
+                      <span className="muted small">Post gain {selectedMixer.effects.current.megaphone.post_gain}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.megaphone.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setMegaphoneStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrMegaphoneStyle
+                              ),
+                            'Megaphone style updated'
+                          )
+                        }}
+                      >
+                        {MEGAPHONE_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.megaphone.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={selectedMixer.effects.current.megaphone.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setMegaphoneAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Megaphone amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Robot</span>
+                      <span className="muted small">Dry mix {selectedMixer.effects.current.robot.dry_mix}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.robot.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setRobotStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrRobotStyle
+                              ),
+                            'Robot style updated'
+                          )
+                        }}
+                      >
+                        {ROBOT_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="muted small">
+                        Low {selectedMixer.effects.current.robot.low_gain}/{selectedMixer.effects.current.robot.low_freq}
+                        {' '}| Mid {selectedMixer.effects.current.robot.mid_gain}/
+                        {selectedMixer.effects.current.robot.mid_freq} | High{' '}
+                        {selectedMixer.effects.current.robot.high_gain}/
+                        {selectedMixer.effects.current.robot.high_freq}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="profileCard">
+                    <div className="panelHeader">
+                      <span>Hard tune</span>
+                      <span className="muted small">Rate {selectedMixer.effects.current.hard_tune.rate}</span>
+                    </div>
+                    <div className="stack compact">
+                      <select
+                        value={selectedMixer.effects.current.hard_tune.style}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setHardTuneStyle(
+                                selectedSerial,
+                                event.target.value as GoXlrHardTuneStyle
+                              ),
+                            'Hard tune style updated'
+                          )
+                        }}
+                      >
+                        {HARD_TUNE_STYLES.map((style) => (
+                          <option key={style} value={style}>
+                            {style}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={selectedMixer.effects.current.hard_tune.source}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setHardTuneSource(
+                                selectedSerial,
+                                event.target.value as GoXlrHardTuneSource
+                              ),
+                            'Hard tune source updated'
+                          )
+                        }}
+                      >
+                        {HARD_TUNE_SOURCES.map((source) => (
+                          <option key={source} value={source}>
+                            {source}
+                          </option>
+                        ))}
+                      </select>
+                      <label className="sliderCard">
+                        <div className="sliderHeader">
+                          <span>Amount</span>
+                          <strong>{selectedMixer.effects.current.hard_tune.amount}</strong>
+                        </div>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={selectedMixer.effects.current.hard_tune.amount}
+                          disabled={busy || !selectedSerial}
+                          onMouseUp={(event) => {
+                            if (!selectedSerial) return
+                            void runAction(
+                              () =>
+                                window.goxlrApi.setHardTuneAmount(
+                                  selectedSerial,
+                                  Number((event.target as HTMLInputElement).value)
+                                ),
+                              'Hard tune amount updated'
+                            )
+                          }}
+                        />
+                      </label>
+                      <p className="muted small">
+                        Window {selectedMixer.effects.current.hard_tune.window}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="muted">No effect block exposed for this mixer.</p>
+            )}
+          </section>
+        ) : null}
+
         {selectedMixer && selectedTab === 'Submix' ? (
           <section className="panel">
             <div className="panelHeader">
@@ -1060,6 +1575,116 @@ function App(): JSX.Element {
             ) : (
               <p className="muted">This mixer does not currently expose submix data.</p>
             )}
+          </section>
+        ) : null}
+
+        {selectedMixer && selectedTab === 'Settings' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Settings</span>
+              <span className="muted small">Device behavior, sampler behavior, and display modes</span>
+            </div>
+            <div className="profileGrid">
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>Mute hold duration</span>
+                  <strong>{selectedMixer.settings.mute_hold_duration} ms</strong>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={3000}
+                  step={50}
+                  value={selectedMixer.settings.mute_hold_duration}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setMuteHoldDuration(
+                          selectedSerial,
+                          Number((event.target as HTMLInputElement).value)
+                        ),
+                      'Mute hold duration updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>Sampler fade duration</span>
+                  <strong>{selectedMixer.settings.fade_duration} ms</strong>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={20000}
+                  step={100}
+                  value={selectedMixer.settings.fade_duration}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setSamplerFadeDuration(
+                          selectedSerial,
+                          Number((event.target as HTMLInputElement).value)
+                        ),
+                      'Sampler fade duration updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <label className="toggleCard">
+                <span>VC mute also mute chat mic</span>
+                <input
+                  type="checkbox"
+                  checked={selectedMixer.settings.vc_mute_also_mute_cm}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setVcMuteAlsoMuteCm(selectedSerial, event.target.checked),
+                      'VC mute routing updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <label className="toggleCard">
+                <span>Reset sampler on clear</span>
+                <input
+                  type="checkbox"
+                  checked={selectedMixer.settings.reset_sampler_on_clear}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setSamplerResetOnClear(selectedSerial, event.target.checked),
+                      'Sampler clear behavior updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <div className="profileCard">
+                <span>Display modes</span>
+                <div className="stack compact">
+                  <p className="muted small">Gate: {selectedMixer.settings.display.gate}</p>
+                  <p className="muted small">
+                    Compressor: {selectedMixer.settings.display.compressor}
+                  </p>
+                  <p className="muted small">
+                    Equaliser: {selectedMixer.settings.display.equaliser}
+                  </p>
+                  <p className="muted small">
+                    Equaliser fine: {selectedMixer.settings.display.equaliser_fine}
+                  </p>
+                </div>
+              </div>
+            </div>
           </section>
         ) : null}
 

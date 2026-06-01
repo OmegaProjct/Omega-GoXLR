@@ -2,18 +2,25 @@ import type {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGenderStyle,
+  GoXlrHardTuneSource,
+  GoXlrHardTuneStyle,
   GoXlrInputDevice,
   GoXlrMix,
+  GoXlrMegaphoneStyle,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrPitchStyle,
+  GoXlrReverbStyle,
+  GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
   GoXlrSimpleColourTarget,
-  GoXlrVodMode
-  ,
+  GoXlrVodMode,
   GoXlrWaterfallDirection
 } from '../main/goxlrTypes'
 
@@ -66,8 +73,30 @@ export interface GoXlrBridge {
   setDeEsser: (serial: string, value: number) => Promise<GoXlrAppState>
   setLockFaders: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
   setVodMode: (serial: string, mode: GoXlrVodMode) => Promise<GoXlrAppState>
+  setMuteHoldDuration: (serial: string, duration: number) => Promise<GoXlrAppState>
+  setVcMuteAlsoMuteCm: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setSamplerResetOnClear: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setSamplerFadeDuration: (serial: string, duration: number) => Promise<GoXlrAppState>
   setEffectPreset: (serial: string, preset: GoXlrEffectPreset) => Promise<GoXlrAppState>
   saveEffectPreset: (serial: string) => Promise<GoXlrAppState>
+  setFxEnabled: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setMegaphoneEnabled: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setRobotEnabled: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setHardTuneEnabled: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setReverbStyle: (serial: string, style: GoXlrReverbStyle) => Promise<GoXlrAppState>
+  setReverbAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setEchoStyle: (serial: string, style: GoXlrEchoStyle) => Promise<GoXlrAppState>
+  setEchoAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setPitchStyle: (serial: string, style: GoXlrPitchStyle) => Promise<GoXlrAppState>
+  setPitchAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setGenderStyle: (serial: string, style: GoXlrGenderStyle) => Promise<GoXlrAppState>
+  setGenderAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setMegaphoneStyle: (serial: string, style: GoXlrMegaphoneStyle) => Promise<GoXlrAppState>
+  setMegaphoneAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setRobotStyle: (serial: string, style: GoXlrRobotStyle) => Promise<GoXlrAppState>
+  setHardTuneStyle: (serial: string, style: GoXlrHardTuneStyle) => Promise<GoXlrAppState>
+  setHardTuneAmount: (serial: string, amount: number) => Promise<GoXlrAppState>
+  setHardTuneSource: (serial: string, source: GoXlrHardTuneSource) => Promise<GoXlrAppState>
   setAnimationMode: (serial: string, mode: GoXlrAnimationMode) => Promise<GoXlrAppState>
   setAnimationMod1: (serial: string, value: number) => Promise<GoXlrAppState>
   setAnimationMod2: (serial: string, value: number) => Promise<GoXlrAppState>

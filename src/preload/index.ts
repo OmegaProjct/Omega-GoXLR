@@ -41,9 +41,53 @@ const api = {
     ipcRenderer.invoke('goxlr:set-lock-faders', { serial, enabled }),
   setVodMode: (serial: string, mode: string) =>
     ipcRenderer.invoke('goxlr:set-vod-mode', { serial, mode }),
+  setMuteHoldDuration: (serial: string, duration: number) =>
+    ipcRenderer.invoke('goxlr:set-mute-hold-duration', { serial, duration }),
+  setVcMuteAlsoMuteCm: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-vc-mute-also-mute-cm', { serial, enabled }),
+  setSamplerResetOnClear: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-sampler-reset-on-clear', { serial, enabled }),
+  setSamplerFadeDuration: (serial: string, duration: number) =>
+    ipcRenderer.invoke('goxlr:set-sampler-fade-duration', { serial, duration }),
   setEffectPreset: (serial: string, preset: string) =>
     ipcRenderer.invoke('goxlr:set-effect-preset', { serial, preset }),
   saveEffectPreset: (serial: string) => ipcRenderer.invoke('goxlr:save-effect-preset', { serial }),
+  setFxEnabled: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-fx-enabled', { serial, enabled }),
+  setMegaphoneEnabled: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-megaphone-enabled', { serial, enabled }),
+  setRobotEnabled: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-robot-enabled', { serial, enabled }),
+  setHardTuneEnabled: (serial: string, enabled: boolean) =>
+    ipcRenderer.invoke('goxlr:set-hard-tune-enabled', { serial, enabled }),
+  setReverbStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-reverb-style', { serial, style }),
+  setReverbAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-reverb-amount', { serial, amount }),
+  setEchoStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-echo-style', { serial, style }),
+  setEchoAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-echo-amount', { serial, amount }),
+  setPitchStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-pitch-style', { serial, style }),
+  setPitchAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-pitch-amount', { serial, amount }),
+  setGenderStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-gender-style', { serial, style }),
+  setGenderAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-gender-amount', { serial, amount }),
+  setMegaphoneStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-megaphone-style', { serial, style }),
+  setMegaphoneAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-megaphone-amount', { serial, amount }),
+  setRobotStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-robot-style', { serial, style }),
+  setHardTuneStyle: (serial: string, style: string) =>
+    ipcRenderer.invoke('goxlr:set-hard-tune-style', { serial, style }),
+  setHardTuneAmount: (serial: string, amount: number) =>
+    ipcRenderer.invoke('goxlr:set-hard-tune-amount', { serial, amount }),
+  setHardTuneSource: (serial: string, source: string) =>
+    ipcRenderer.invoke('goxlr:set-hard-tune-source', { serial, source }),
   setAnimationMode: (serial: string, mode: string) =>
     ipcRenderer.invoke('goxlr:set-animation-mode', { serial, mode }),
   setAnimationMod1: (serial: string, value: number) =>

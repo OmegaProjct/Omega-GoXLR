@@ -2,18 +2,25 @@ import {
   GoXlrAnimationMode,
   DaemonStatus,
   GoXlrChannelName,
+  GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGenderStyle,
+  GoXlrHardTuneSource,
+  GoXlrHardTuneStyle,
   GoXlrInputDevice,
+  GoXlrMegaphoneStyle,
   GoXlrMix,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrPitchStyle,
+  GoXlrReverbStyle,
+  GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
   GoXlrSimpleColourTarget,
-  GoXlrVodMode
-  ,
+  GoXlrVodMode,
   GoXlrWaterfallDirection
 } from './goxlrTypes'
 
@@ -211,6 +218,30 @@ export async function setVodMode(serial: string, mode: GoXlrVodMode): Promise<vo
   })
 }
 
+export async function setMuteHoldDuration(serial: string, duration: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMuteHoldDuration: duration
+  })
+}
+
+export async function setVcMuteAlsoMuteCm(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetVCMuteAlsoMuteCM: enabled
+  })
+}
+
+export async function setSamplerResetOnClear(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSamplerResetOnClear: enabled
+  })
+}
+
+export async function setSamplerFadeDuration(serial: string, duration: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSamplerFadeDuration: duration
+  })
+}
+
 export async function setActiveEffectPreset(
   serial: string,
   preset: GoXlrEffectPreset
@@ -222,6 +253,117 @@ export async function setActiveEffectPreset(
 
 export async function saveActivePreset(serial: string): Promise<void> {
   await sendMixerCommand(serial, 'SaveActivePreset')
+}
+
+export async function setFxEnabled(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetFXEnabled: enabled
+  })
+}
+
+export async function setMegaphoneEnabled(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMegaphoneEnabled: enabled
+  })
+}
+
+export async function setRobotEnabled(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetRobotEnabled: enabled
+  })
+}
+
+export async function setHardTuneEnabled(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetHardTuneEnabled: enabled
+  })
+}
+
+export async function setReverbStyle(serial: string, style: GoXlrReverbStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetReverbStyle: style
+  })
+}
+
+export async function setReverbAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetReverbAmount: amount
+  })
+}
+
+export async function setEchoStyle(serial: string, style: GoXlrEchoStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEchoStyle: style
+  })
+}
+
+export async function setEchoAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetEchoAmount: amount
+  })
+}
+
+export async function setPitchStyle(serial: string, style: GoXlrPitchStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetPitchStyle: style
+  })
+}
+
+export async function setPitchAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetPitchAmount: amount
+  })
+}
+
+export async function setGenderStyle(serial: string, style: GoXlrGenderStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGenderStyle: style
+  })
+}
+
+export async function setGenderAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetGenderAmount: amount
+  })
+}
+
+export async function setMegaphoneStyle(serial: string, style: GoXlrMegaphoneStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMegaphoneStyle: style
+  })
+}
+
+export async function setMegaphoneAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMegaphoneAmount: amount
+  })
+}
+
+export async function setRobotStyle(serial: string, style: GoXlrRobotStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetRobotStyle: style
+  })
+}
+
+export async function setHardTuneStyle(serial: string, style: GoXlrHardTuneStyle): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetHardTuneStyle: style
+  })
+}
+
+export async function setHardTuneAmount(serial: string, amount: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetHardTuneAmount: amount
+  })
+}
+
+export async function setHardTuneSource(
+  serial: string,
+  source: GoXlrHardTuneSource
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetHardTuneSource: source
+  })
 }
 
 export async function setAnimationMode(serial: string, mode: GoXlrAnimationMode): Promise<void> {

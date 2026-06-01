@@ -44,6 +44,32 @@ export type GoXlrMicrophoneType = 'Dynamic' | 'Condenser' | 'Jack'
 export type GoXlrMix = 'A' | 'B'
 export type GoXlrEffectPreset = 'Preset1' | 'Preset2' | 'Preset3' | 'Preset4' | 'Preset5' | 'Preset6'
 export type GoXlrVodMode = 'Routable' | 'StreamNoMusic'
+export type GoXlrReverbStyle =
+  | 'Library'
+  | 'DarkBloom'
+  | 'MusicClub'
+  | 'RealPlate'
+  | 'Chapel'
+  | 'HockeyArena'
+export type GoXlrEchoStyle =
+  | 'Quarter'
+  | 'Eighth'
+  | 'Triplet'
+  | 'PingPong'
+  | 'ClassicSlap'
+  | 'MultiTap'
+export type GoXlrPitchStyle = 'Narrow' | 'Wide'
+export type GoXlrGenderStyle = 'Narrow' | 'Medium' | 'Wide'
+export type GoXlrMegaphoneStyle =
+  | 'Megaphone'
+  | 'Radio'
+  | 'OnThePhone'
+  | 'Overdrive'
+  | 'BuzzCutt'
+  | 'Tweed'
+export type GoXlrRobotStyle = 'Robot1' | 'Robot2' | 'Robot3'
+export type GoXlrHardTuneStyle = 'Natural' | 'Medium' | 'Hard'
+export type GoXlrHardTuneSource = 'All' | 'Music' | 'Game' | 'LineIn' | 'System'
 export type GoXlrAnimationMode =
   | 'RetroRainbow'
   | 'RainbowDark'
@@ -180,6 +206,78 @@ export type MixerStatus = {
     is_enabled: boolean
     active_preset: GoXlrEffectPreset
     preset_names: Record<GoXlrEffectPreset, string>
+    current: {
+      reverb: {
+        style: GoXlrReverbStyle
+        amount: number
+        decay: number
+        early_level: number
+        tail_level: number
+        pre_delay: number
+        lo_colour: number
+        hi_colour: number
+        hi_factor: number
+        diffuse: number
+        mod_speed: number
+        mod_depth: number
+        raw_encoder: number
+      }
+      echo: {
+        style: GoXlrEchoStyle
+        amount: number
+        feedback: number
+        tempo: number
+        delay_left: number
+        delay_right: number
+        feedback_left: number
+        feedback_right: number
+        feedback_xfb_l_to_r: number
+        feedback_xfb_r_to_l: number
+        raw_encoder: number
+      }
+      pitch: {
+        style: GoXlrPitchStyle
+        amount: number
+        character: number
+        raw_encoder: number
+      }
+      gender: {
+        style: GoXlrGenderStyle
+        amount: number
+        raw_encoder: number
+      }
+      megaphone: {
+        is_enabled: boolean
+        style: GoXlrMegaphoneStyle
+        amount: number
+        post_gain: number
+      }
+      robot: {
+        is_enabled: boolean
+        style: GoXlrRobotStyle
+        low_gain: number
+        low_freq: number
+        low_width: number
+        mid_gain: number
+        mid_freq: number
+        mid_width: number
+        high_gain: number
+        high_freq: number
+        high_width: number
+        waveform: number
+        pulse_width: number
+        threshold: number
+        dry_mix: number
+      }
+      hard_tune: {
+        is_enabled: boolean
+        style: GoXlrHardTuneStyle
+        amount: number
+        rate: number
+        window: number
+        source: GoXlrHardTuneSource
+      }
+    }
   } | null
   sampler?: {
     active_bank: GoXlrSampleBank
@@ -204,6 +302,12 @@ export type MixerStatus = {
     >
   } | null
   settings: {
+    display: {
+      gate: string
+      compressor: string
+      equaliser: string
+      equaliser_fine: string
+    }
     mute_hold_duration: number
     vc_mute_also_mute_cm: boolean
     enable_monitor_with_fx: boolean

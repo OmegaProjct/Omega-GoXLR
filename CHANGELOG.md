@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.4] - 2026-06-01
+
+### English
+
+#### Added
+- **Effects workspace**: Added a dedicated Effects tab with toggles for the FX engine, Megaphone, Robot, and Hard Tune, plus live controls for reverb, echo, pitch, gender, and key effect styles.
+- **Settings workspace**: Added a dedicated Settings tab for mute-hold timing, sampler fade duration, reset-on-clear behavior, VC mute routing, and read-only display mode visibility.
+
+#### Changed
+- **Bridge expansion for effect and settings control**: The Electron bridge now supports deeper daemon commands for FX state, reverb/echo/pitch/gender updates, character effect toggles, and device settings behavior.
+- **Typed mixer model growth**: Shared TypeScript models now cover deep effect payloads and display settings so the renderer can work with current daemon state without fallback parsing.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Effects-Arbeitsbereich**: Neuer Effects-Tab mit Schaltern fuer FX-Engine, Megaphone, Robot und Hard Tune sowie Live-Steuerung fuer Reverb, Echo, Pitch, Gender und zentrale Effektstile.
+- **Settings-Arbeitsbereich**: Neuer Settings-Tab fuer Mute-Hold-Dauer, Sampler-Fade-Dauer, Reset-beim-Leeren, VC-Mute-Routing und sichtbare Display-Modi.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Effekt- und Settings-Steuerung**: Die Electron-Bridge deckt jetzt tiefere Daemon-Befehle fuer FX-Status, Reverb-/Echo-/Pitch-/Gender-Aenderungen, Charaktereffekte und Geraeteverhalten ab.
+- **Groesseres typisiertes Mixer-Modell**: Die gemeinsamen TypeScript-Modelle enthalten jetzt tiefe Effekt-Payloads und Display-Settings, damit der Renderer den aktuellen Daemon-Zustand ohne Fallback-Parsing nutzen kann.
+
 ## [0.1.3] - 2026-06-01
 
 ### English

@@ -3,6 +3,15 @@ import { join } from 'path'
 import { GoXlrDaemonManager } from './goxlrDaemon'
 import {
   fetchDaemonStatus,
+  setEchoAmount,
+  setEchoStyle,
+  setFxEnabled,
+  setGenderAmount,
+  setGenderStyle,
+  setHardTuneAmount,
+  setHardTuneEnabled,
+  setHardTuneSource,
+  setHardTuneStyle,
   loadMicProfile,
   loadProfile,
   openPath,
@@ -21,10 +30,22 @@ import {
   setDeEsser,
   setFaderAssignment,
   setLockFaders,
+  setMegaphoneAmount,
+  setMegaphoneEnabled,
+  setMegaphoneStyle,
   setMonitorMix,
   setMonitorWithFx,
   setMicrophoneGain,
   setMicrophoneType,
+  setMuteHoldDuration,
+  setPitchAmount,
+  setPitchStyle,
+  setReverbAmount,
+  setReverbStyle,
+  setRobotEnabled,
+  setRobotStyle,
+  setSamplerFadeDuration,
+  setSamplerResetOnClear,
   setSimpleColour,
   setRouterEntry,
   stopSamplePlayback,
@@ -32,24 +53,32 @@ import {
   setSubmixLinked,
   setSubmixOutputMix,
   setSubmixVolume,
+  setVcMuteAlsoMuteCm,
   setVodMode
 } from './goxlrApi'
 import {
   GoXlrAnimationMode,
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEchoStyle,
   GoXlrEffectPreset,
   GoXlrFaderName,
+  GoXlrGenderStyle,
+  GoXlrHardTuneSource,
+  GoXlrHardTuneStyle,
   GoXlrInputDevice,
   GoXlrMix,
+  GoXlrMegaphoneStyle,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrPitchStyle,
+  GoXlrReverbStyle,
+  GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
   GoXlrSimpleColourTarget,
-  GoXlrVodMode
-  ,
+  GoXlrVodMode,
   GoXlrWaterfallDirection
 } from './goxlrTypes'
 
@@ -300,6 +329,34 @@ function setupIpc(): void {
       return buildAppState()
     }
   )
+  ipcMain.handle(
+    'goxlr:set-mute-hold-duration',
+    async (_event, payload: { serial: string; duration: number }) => {
+      await setMuteHoldDuration(payload.serial, payload.duration)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-vc-mute-also-mute-cm',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setVcMuteAlsoMuteCm(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sampler-reset-on-clear',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setSamplerResetOnClear(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sampler-fade-duration',
+    async (_event, payload: { serial: string; duration: number }) => {
+      await setSamplerFadeDuration(payload.serial, payload.duration)
+      return buildAppState()
+    }
+  )
 
   ipcMain.handle(
     'goxlr:set-effect-preset',
@@ -313,6 +370,132 @@ function setupIpc(): void {
     await saveActivePreset(payload.serial)
     return buildAppState()
   })
+  ipcMain.handle(
+    'goxlr:set-fx-enabled',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setFxEnabled(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-megaphone-enabled',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setMegaphoneEnabled(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-robot-enabled',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setRobotEnabled(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-hard-tune-enabled',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setHardTuneEnabled(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-reverb-style',
+    async (_event, payload: { serial: string; style: GoXlrReverbStyle }) => {
+      await setReverbStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-reverb-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setReverbAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-echo-style',
+    async (_event, payload: { serial: string; style: GoXlrEchoStyle }) => {
+      await setEchoStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-echo-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setEchoAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-pitch-style',
+    async (_event, payload: { serial: string; style: GoXlrPitchStyle }) => {
+      await setPitchStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-pitch-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setPitchAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gender-style',
+    async (_event, payload: { serial: string; style: GoXlrGenderStyle }) => {
+      await setGenderStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-gender-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setGenderAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-megaphone-style',
+    async (_event, payload: { serial: string; style: GoXlrMegaphoneStyle }) => {
+      await setMegaphoneStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-megaphone-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setMegaphoneAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-robot-style',
+    async (_event, payload: { serial: string; style: GoXlrRobotStyle }) => {
+      await setRobotStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-hard-tune-style',
+    async (_event, payload: { serial: string; style: GoXlrHardTuneStyle }) => {
+      await setHardTuneStyle(payload.serial, payload.style)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-hard-tune-amount',
+    async (_event, payload: { serial: string; amount: number }) => {
+      await setHardTuneAmount(payload.serial, payload.amount)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-hard-tune-source',
+    async (_event, payload: { serial: string; source: GoXlrHardTuneSource }) => {
+      await setHardTuneSource(payload.serial, payload.source)
+      return buildAppState()
+    }
+  )
 
   ipcMain.handle(
     'goxlr:set-animation-mode',

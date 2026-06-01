@@ -98,8 +98,12 @@ export interface GoXlrBridge {
   ) => Promise<GoXlrAppState>
   loadProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   saveProfile: (serial: string) => Promise<GoXlrAppState>
+  saveProfileAs: (serial: string, profileName: string) => Promise<GoXlrAppState>
+  deleteProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   loadMicProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   saveMicProfile: (serial: string) => Promise<GoXlrAppState>
+  saveMicProfileAs: (serial: string, profileName: string) => Promise<GoXlrAppState>
+  deleteMicProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   openPath: (pathType: GoXlrPathType) => Promise<boolean>
   setMonitorMix: (serial: string, output: GoXlrOutputDevice) => Promise<GoXlrAppState>
   setMonitorWithFx: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
@@ -160,6 +164,26 @@ export interface GoXlrBridge {
     colour: string
   ) => Promise<GoXlrAppState>
   setSamplerBank: (serial: string, bank: GoXlrSampleBank) => Promise<GoXlrAppState>
+  setScribbleIcon: (
+    serial: string,
+    fader: GoXlrFaderName,
+    iconFileName: string | null
+  ) => Promise<GoXlrAppState>
+  setScribbleText: (
+    serial: string,
+    fader: GoXlrFaderName,
+    text: string
+  ) => Promise<GoXlrAppState>
+  setScribbleNumber: (
+    serial: string,
+    fader: GoXlrFaderName,
+    value: string
+  ) => Promise<GoXlrAppState>
+  setScribbleInvert: (
+    serial: string,
+    fader: GoXlrFaderName,
+    inverted: boolean
+  ) => Promise<GoXlrAppState>
   setSamplerFunction: (
     serial: string,
     bank: GoXlrSampleBank,

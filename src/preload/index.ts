@@ -47,9 +47,17 @@ const api = {
   loadProfile: (serial: string, profileName: string) =>
     ipcRenderer.invoke('goxlr:load-profile', { serial, profileName }),
   saveProfile: (serial: string) => ipcRenderer.invoke('goxlr:save-profile', { serial }),
+  saveProfileAs: (serial: string, profileName: string) =>
+    ipcRenderer.invoke('goxlr:save-profile-as', { serial, profileName }),
+  deleteProfile: (serial: string, profileName: string) =>
+    ipcRenderer.invoke('goxlr:delete-profile', { serial, profileName }),
   loadMicProfile: (serial: string, profileName: string) =>
     ipcRenderer.invoke('goxlr:load-mic-profile', { serial, profileName }),
   saveMicProfile: (serial: string) => ipcRenderer.invoke('goxlr:save-mic-profile', { serial }),
+  saveMicProfileAs: (serial: string, profileName: string) =>
+    ipcRenderer.invoke('goxlr:save-mic-profile-as', { serial, profileName }),
+  deleteMicProfile: (serial: string, profileName: string) =>
+    ipcRenderer.invoke('goxlr:delete-mic-profile', { serial, profileName }),
   openPath: (pathType: string) => ipcRenderer.invoke('goxlr:open-path', { pathType }),
   setMonitorMix: (serial: string, output: string) =>
     ipcRenderer.invoke('goxlr:set-monitor-mix', { serial, output }),
@@ -130,6 +138,14 @@ const api = {
     ipcRenderer.invoke('goxlr:set-simple-colour', { serial, target, colour }),
   setSamplerBank: (serial: string, bank: string) =>
     ipcRenderer.invoke('goxlr:set-sampler-bank', { serial, bank }),
+  setScribbleIcon: (serial: string, fader: string, iconFileName: string | null) =>
+    ipcRenderer.invoke('goxlr:set-scribble-icon', { serial, fader, iconFileName }),
+  setScribbleText: (serial: string, fader: string, text: string) =>
+    ipcRenderer.invoke('goxlr:set-scribble-text', { serial, fader, text }),
+  setScribbleNumber: (serial: string, fader: string, value: string) =>
+    ipcRenderer.invoke('goxlr:set-scribble-number', { serial, fader, value }),
+  setScribbleInvert: (serial: string, fader: string, inverted: boolean) =>
+    ipcRenderer.invoke('goxlr:set-scribble-invert', { serial, fader, inverted }),
   setSamplerFunction: (serial: string, bank: string, button: string, mode: string) =>
     ipcRenderer.invoke('goxlr:set-sampler-function', { serial, bank, button, mode }),
   setSamplerOrder: (serial: string, bank: string, button: string, order: string) =>

@@ -327,6 +327,8 @@ function App(): JSX.Element {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [sampleDrafts, setSampleDrafts] = useState<Record<string, string>>({})
+  const [profileDraftName, setProfileDraftName] = useState('')
+  const [micProfileDraftName, setMicProfileDraftName] = useState('')
 
   const mixers = appState.status?.mixers ?? {}
   const serials = Object.keys(mixers)
@@ -336,6 +338,7 @@ function App(): JSX.Element {
   const micProfileFiles = appState.status?.files.mic_profiles ?? []
   const presetFiles = appState.status?.files.presets ?? []
   const sampleLibraryEntries = Object.entries(appState.status?.files.samples ?? {})
+  const iconFiles = appState.status?.files.icons ?? []
   const activeSamplerBank = selectedMixer?.sampler?.active_bank ?? 'A'
 
   const deviceFacts = useMemo(() => {
@@ -722,43 +725,130 @@ function App(): JSX.Element {
           <section className="panel">
             <div className="panelHeader">
               <span>Fader assignment</span>
-              <span className="muted small">Route channels to the physical faders</span>
+              <span className="muted small">Route channels and configure scribble strips</span>
             </div>
             <div className="stack">
               {FADER_ORDER.map((fader) => (
-                <label key={fader} className="formRow">
-                  <div>
-                    <strong>Fader {fader}</strong>
-                    <p className="muted small">
-                      Mute: {selectedMixer.fader_status[fader].mute_type} | State:{' '}
-                      {selectedMixer.fader_status[fader].mute_state}
-                    </p>
+                <div key={fader} className="profileCard">
+                  <div className="formRow">
+                    <div>
+                      <strong>Fader {fader}</strong>
+                      <p className="muted small">
+                        Mute: {selectedMixer.fader_status[fader].mute_type} | State:{' '}
+                        {selectedMixer.fader_status[fader].mute_state}
+                      </p>
+                    </div>
+                    <select
+                      value={selectedMixer.fader_status[fader].channel}
+                      disabled={busy || !selectedSerial}
+                      onChange={(event) => {
+                        if (!selectedSerial) {
+                          return
+                        }
+                        void runAction(
+                          () =>
+                            window.goxlrApi.setFader(
+                              selectedSerial,
+                              fader,
+                              event.target.value as GoXlrChannelName
+                            ),
+                          `Fader ${fader} updated`
+                        )
+                      }}
+                    >
+                      {FADER_CHANNEL_OPTIONS.map((channel) => (
+                        <option key={channel} value={channel}>
+                          {channel}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <select
-                    value={selectedMixer.fader_status[fader].channel}
-                    disabled={busy || !selectedSerial}
-                    onChange={(event) => {
-                      if (!selectedSerial) {
-                        return
-                      }
-                      void runAction(
-                        () =>
-                          window.goxlrApi.setFader(
-                            selectedSerial,
-                            fader,
-                            event.target.value as GoXlrChannelName
-                          ),
-                        `Fader ${fader} updated`
-                      )
-                    }}
-                  >
-                    {FADER_CHANNEL_OPTIONS.map((channel) => (
-                      <option key={channel} value={channel}>
-                        {channel}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+
+                  <div className="scribbleGrid">
+                    <label>
+                      <span className="muted small">Icon</span>
+                      <select
+                        value={selectedMixer.fader_status[fader].scribble?.file_name ?? ''}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          const nextValue = event.target.value || null
+                          void runAction(
+                            () => window.goxlrApi.setScribbleIcon(selectedSerial, fader, nextValue),
+                            `Fader ${fader} icon updated`
+                          )
+                        }}
+                      >
+                        <option value="">No icon</option>
+                        {iconFiles.map((iconFile) => (
+                          <option key={iconFile} value={iconFile}>
+                            {iconFile}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span className="muted small">Bottom text</span>
+                      <input
+                        type="text"
+                        defaultValue={selectedMixer.fader_status[fader].scribble?.bottom_text ?? ''}
+                        disabled={busy || !selectedSerial}
+                        onBlur={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setScribbleText(
+                                selectedSerial,
+                                fader,
+                                (event.target as HTMLInputElement).value
+                              ),
+                            `Fader ${fader} text updated`
+                          )
+                        }}
+                      />
+                    </label>
+                    <label>
+                      <span className="muted small">Left text</span>
+                      <input
+                        type="text"
+                        defaultValue={selectedMixer.fader_status[fader].scribble?.left_text ?? ''}
+                        disabled={busy || !selectedSerial}
+                        onBlur={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setScribbleNumber(
+                                selectedSerial,
+                                fader,
+                                (event.target as HTMLInputElement).value
+                              ),
+                            `Fader ${fader} side text updated`
+                          )
+                        }}
+                      />
+                    </label>
+                    <label className="inlineToggle">
+                      <span>Invert</span>
+                      <input
+                        type="checkbox"
+                        checked={selectedMixer.fader_status[fader].scribble?.inverted ?? false}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setScribbleInvert(
+                                selectedSerial,
+                                fader,
+                                event.target.checked
+                              ),
+                            `Fader ${fader} invert updated`
+                          )
+                        }}
+                      />
+                    </label>
+                  </div>
+                </div>
               ))}
             </div>
           </section>
@@ -1341,6 +1431,40 @@ function App(): JSX.Element {
                     </option>
                   ))}
                 </select>
+                <div className="buttonRow tight">
+                  <input
+                    type="text"
+                    placeholder="New profile name"
+                    value={profileDraftName}
+                    onChange={(event) => setProfileDraftName(event.target.value)}
+                    disabled={busy || !selectedSerial}
+                  />
+                  <button
+                    disabled={busy || !selectedSerial || !profileDraftName.trim()}
+                    onClick={() => {
+                      if (!selectedSerial || !profileDraftName.trim()) return
+                      void runAction(
+                        () => window.goxlrApi.saveProfileAs(selectedSerial, profileDraftName.trim()),
+                        'Profile saved as new file'
+                      ).then(() => setProfileDraftName(''))
+                    }}
+                  >
+                    Save as
+                  </button>
+                </div>
+                <button
+                  className="ghost"
+                  disabled={busy || !selectedSerial || selectedMixer.profile_name === ''}
+                  onClick={() => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.deleteProfile(selectedSerial, selectedMixer.profile_name),
+                      'Profile deleted'
+                    )
+                  }}
+                >
+                  Delete selected
+                </button>
               </div>
 
               <div className="profileCard">
@@ -1381,6 +1505,44 @@ function App(): JSX.Element {
                     </option>
                   ))}
                 </select>
+                <div className="buttonRow tight">
+                  <input
+                    type="text"
+                    placeholder="New mic profile name"
+                    value={micProfileDraftName}
+                    onChange={(event) => setMicProfileDraftName(event.target.value)}
+                    disabled={busy || !selectedSerial}
+                  />
+                  <button
+                    disabled={busy || !selectedSerial || !micProfileDraftName.trim()}
+                    onClick={() => {
+                      if (!selectedSerial || !micProfileDraftName.trim()) return
+                      void runAction(
+                        () =>
+                          window.goxlrApi.saveMicProfileAs(
+                            selectedSerial,
+                            micProfileDraftName.trim()
+                          ),
+                        'Mic profile saved as new file'
+                      ).then(() => setMicProfileDraftName(''))
+                    }}
+                  >
+                    Save as
+                  </button>
+                </div>
+                <button
+                  className="ghost"
+                  disabled={busy || !selectedSerial || selectedMixer.mic_profile_name === ''}
+                  onClick={() => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.deleteMicProfile(selectedSerial, selectedMixer.mic_profile_name),
+                      'Mic profile deleted'
+                    )
+                  }}
+                >
+                  Delete selected
+                </button>
               </div>
 
               <div className="profileCard">

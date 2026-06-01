@@ -296,6 +296,12 @@ export type MixerStatus = {
       channel: GoXlrChannelName
       mute_type: string
       mute_state: string
+      scribble?: {
+        file_name: string | null
+        bottom_text: string | null
+        left_text: string | null
+        inverted: boolean
+      } | null
     }
   >
   mic_status: {

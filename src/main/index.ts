@@ -3,8 +3,12 @@ import { join } from 'path'
 import { GoXlrDaemonManager } from './goxlrDaemon'
 import {
   addSampleToButton,
+  deleteMicProfile,
+  deleteProfile,
   fetchDaemonStatus,
   removeSampleByIndex,
+  saveMicProfileAs,
+  saveProfileAs,
   setEqFreq,
   setEqGain,
   setEqMiniFreq,
@@ -67,6 +71,10 @@ import {
   setSamplerFunction,
   setSamplerOrder,
   setSamplerResetOnClear,
+  setScribbleIcon,
+  setScribbleInvert,
+  setScribbleNumber,
+  setScribbleText,
   setSimpleColour,
   setRouterEntry,
   stopSamplePlayback,
@@ -359,6 +367,14 @@ function setupIpc(): void {
     await saveProfile(payload.serial)
     return buildAppState()
   })
+  ipcMain.handle('goxlr:save-profile-as', async (_event, payload: { serial: string; profileName: string }) => {
+    await saveProfileAs(payload.serial, payload.profileName)
+    return buildAppState()
+  })
+  ipcMain.handle('goxlr:delete-profile', async (_event, payload: { serial: string; profileName: string }) => {
+    await deleteProfile(payload.serial, payload.profileName)
+    return buildAppState()
+  })
 
   ipcMain.handle(
     'goxlr:load-mic-profile',
@@ -372,6 +388,20 @@ function setupIpc(): void {
     await saveMicProfile(payload.serial)
     return buildAppState()
   })
+  ipcMain.handle(
+    'goxlr:save-mic-profile-as',
+    async (_event, payload: { serial: string; profileName: string }) => {
+      await saveMicProfileAs(payload.serial, payload.profileName)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:delete-mic-profile',
+    async (_event, payload: { serial: string; profileName: string }) => {
+      await deleteMicProfile(payload.serial, payload.profileName)
+      return buildAppState()
+    }
+  )
 
   ipcMain.handle('goxlr:open-path', async (_event, payload: { pathType: GoXlrPathType }) => {
     await openPath(payload.pathType)
@@ -678,6 +708,34 @@ function setupIpc(): void {
     'goxlr:set-sampler-bank',
     async (_event, payload: { serial: string; bank: GoXlrSampleBank }) => {
       await setActiveSamplerBank(payload.serial, payload.bank)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-scribble-icon',
+    async (_event, payload: { serial: string; fader: GoXlrFaderName; iconFileName: string | null }) => {
+      await setScribbleIcon(payload.serial, payload.fader, payload.iconFileName)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-scribble-text',
+    async (_event, payload: { serial: string; fader: GoXlrFaderName; text: string }) => {
+      await setScribbleText(payload.serial, payload.fader, payload.text)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-scribble-number',
+    async (_event, payload: { serial: string; fader: GoXlrFaderName; value: string }) => {
+      await setScribbleNumber(payload.serial, payload.fader, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-scribble-invert',
+    async (_event, payload: { serial: string; fader: GoXlrFaderName; inverted: boolean }) => {
+      await setScribbleInvert(payload.serial, payload.fader, payload.inverted)
       return buildAppState()
     }
   )

@@ -37,12 +37,14 @@ button {
 
 select,
 input[type='number'],
+input[type='text'],
 input[type='range'] {
   width: 100%;
 }
 
 select,
-input[type='number'] {
+input[type='number'],
+input[type='text'] {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
@@ -361,6 +363,12 @@ h2 {
 
 .profileGrid {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.scribbleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
 }
 
 .submixHeader {

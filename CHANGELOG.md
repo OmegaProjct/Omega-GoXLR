@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.8] - 2026-06-01
+
+### English
+
+#### Added
+- **Profile authoring workflow**: Added `Save As` and delete actions for main profiles and mic profiles directly in the Profiles workspace.
+- **Scribble strip editing**: Added per-fader scribble controls for icon selection, bottom text, side text, and invert mode in the Faders workspace.
+
+#### Changed
+- **Bridge expansion for profile and scribble editing**: The Electron bridge now supports profile save-as/delete flows, mic-profile save-as/delete flows, and the four scribble update commands.
+- **Fader model growth**: Shared fader typing now includes scribble payload data so the renderer can work with current icon/text/invert state without untyped access.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Profil-Authoring-Workflow**: `Save As`- und Delete-Aktionen fuer Hauptprofile und Mic-Profile direkt im Profiles-Arbeitsbereich.
+- **Scribble-Strip-Bearbeitung**: Pro-Fader-Steuerung fuer Icon-Auswahl, Bottom-Text, Seitentext und Invertierung im Faders-Arbeitsbereich.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Profil- und Scribble-Bearbeitung**: Die Electron-Bridge unterstuetzt jetzt Profil-Save-As/Delete, Mic-Profil-Save-As/Delete sowie alle vier Scribble-Befehle.
+- **Groesseres Fader-Modell**: Das gemeinsame Fader-Typmodell enthaelt jetzt Scribble-Payload-Daten, damit der Renderer den aktuellen Icon-/Text-/Invert-State ohne untypisierte Zugriffe nutzen kann.
+
 ## [0.1.7] - 2026-06-01
 
 ### English

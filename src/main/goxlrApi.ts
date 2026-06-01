@@ -258,6 +258,18 @@ export async function saveProfile(serial: string): Promise<void> {
   await sendMixerCommand(serial, 'SaveProfile')
 }
 
+export async function saveProfileAs(serial: string, profileName: string): Promise<void> {
+  await sendMixerCommand(serial, {
+    SaveProfileAs: profileName
+  })
+}
+
+export async function deleteProfile(serial: string, profileName: string): Promise<void> {
+  await sendMixerCommand(serial, {
+    DeleteProfile: profileName
+  })
+}
+
 export async function loadMicProfile(serial: string, profileName: string): Promise<void> {
   await sendMixerCommand(serial, {
     LoadMicProfile: [profileName, false]
@@ -266,6 +278,58 @@ export async function loadMicProfile(serial: string, profileName: string): Promi
 
 export async function saveMicProfile(serial: string): Promise<void> {
   await sendMixerCommand(serial, 'SaveMicProfile')
+}
+
+export async function saveMicProfileAs(serial: string, profileName: string): Promise<void> {
+  await sendMixerCommand(serial, {
+    SaveMicProfileAs: profileName
+  })
+}
+
+export async function deleteMicProfile(serial: string, profileName: string): Promise<void> {
+  await sendMixerCommand(serial, {
+    DeleteMicProfile: profileName
+  })
+}
+
+export async function setScribbleIcon(
+  serial: string,
+  fader: GoXlrFaderName,
+  iconFileName: string | null
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetScribbleIcon: [fader, iconFileName]
+  })
+}
+
+export async function setScribbleText(
+  serial: string,
+  fader: GoXlrFaderName,
+  text: string
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetScribbleText: [fader, text]
+  })
+}
+
+export async function setScribbleNumber(
+  serial: string,
+  fader: GoXlrFaderName,
+  value: string
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetScribbleNumber: [fader, value]
+  })
+}
+
+export async function setScribbleInvert(
+  serial: string,
+  fader: GoXlrFaderName,
+  inverted: boolean
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetScribbleInvert: [fader, inverted]
+  })
 }
 
 export async function openPath(pathType: GoXlrPathType): Promise<void> {

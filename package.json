@@ -1,0 +1,70 @@
+{
+  "name": "omega-goxlr",
+  "version": "0.1.0",
+  "description": "Omega GoXLR",
+  "main": "./out/main/index.js",
+  "author": "Omega Projects <omegaproject1337@gmail.com>",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OmegaProjct/Omega-GoXLR.git"
+  },
+  "homepage": "https://github.com/OmegaProjct/Omega-GoXLR#readme",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.11",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^30.0.6",
+    "electron-builder": "^26.11.1",
+    "electron-vite": "^2.3.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  },
+  "build": {
+    "appId": "de.omegaprojects.goxlrdesktop",
+    "productName": "Omega GoXLR",
+    "directories": {
+      "output": "dist-bin"
+    },
+    "files": [
+      "out/**/*",
+      "resources/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "OmegaProjct",
+        "repo": "Omega-GoXLR"
+      }
+    ],
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Omega GoXLR"
+    }
+  }
+}

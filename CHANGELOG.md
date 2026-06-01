@@ -2,6 +2,28 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.5] - 2026-06-01
+
+### English
+
+#### Added
+- **Sampler management workflow**: Added sampler pad editing for playback mode, play order, library assignment, per-sample removal, and start/stop trim adjustment.
+- **Sample library visibility**: The Sampler workspace now shows the daemon-exposed sample library and provides direct access to the samples folder.
+
+#### Changed
+- **Bridge expansion for sampler editing**: The Electron bridge now supports sampler function changes, order changes, sample assignment, sample removal, and trim updates.
+- **Typed file model growth**: Shared TypeScript models now include daemon sample-library metadata and typed sampler mode/order values.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Sampler-Management-Workflow**: Der Sampler unterstuetzt jetzt Pad-Bearbeitung fuer Playback-Modus, Abspielreihenfolge, Bibliotheks-Zuweisung, Entfernen einzelner Samples sowie Start-/Stop-Trim.
+- **Sichtbare Sample-Bibliothek**: Der Sampler-Arbeitsbereich zeigt jetzt die vom Daemon bekannte Sample-Bibliothek und bietet einen direkten Zugriff auf den Samples-Ordner.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Sampler-Bearbeitung**: Die Electron-Bridge deckt jetzt Sampler-Funktionswechsel, Reihenfolge, Sample-Zuweisung, Entfernen und Trim-Updates ab.
+- **Groesseres typisiertes Dateimodell**: Die gemeinsamen TypeScript-Modelle enthalten jetzt Sample-Bibliotheksdaten des Daemons sowie typisierte Sampler-Modi und Reihenfolgen.
+
 ## [0.1.4] - 2026-06-01
 
 ### English

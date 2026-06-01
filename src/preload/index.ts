@@ -100,6 +100,18 @@ const api = {
     ipcRenderer.invoke('goxlr:set-simple-colour', { serial, target, colour }),
   setSamplerBank: (serial: string, bank: string) =>
     ipcRenderer.invoke('goxlr:set-sampler-bank', { serial, bank }),
+  setSamplerFunction: (serial: string, bank: string, button: string, mode: string) =>
+    ipcRenderer.invoke('goxlr:set-sampler-function', { serial, bank, button, mode }),
+  setSamplerOrder: (serial: string, bank: string, button: string, order: string) =>
+    ipcRenderer.invoke('goxlr:set-sampler-order', { serial, bank, button, order }),
+  addSample: (serial: string, bank: string, button: string, sampleName: string) =>
+    ipcRenderer.invoke('goxlr:add-sample', { serial, bank, button, sampleName }),
+  removeSample: (serial: string, bank: string, button: string, index: number) =>
+    ipcRenderer.invoke('goxlr:remove-sample', { serial, bank, button, index }),
+  setSampleStart: (serial: string, bank: string, button: string, index: number, value: number) =>
+    ipcRenderer.invoke('goxlr:set-sample-start', { serial, bank, button, index, value }),
+  setSampleStop: (serial: string, bank: string, button: string, index: number, value: number) =>
+    ipcRenderer.invoke('goxlr:set-sample-stop', { serial, bank, button, index, value }),
   playNextSample: (serial: string, bank: string, button: string) =>
     ipcRenderer.invoke('goxlr:play-next-sample', { serial, bank, button }),
   stopSample: (serial: string, bank: string, button: string) =>

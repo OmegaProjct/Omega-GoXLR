@@ -19,6 +19,8 @@ import {
   GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
+  GoXlrSamplePlaybackMode,
+  GoXlrSamplePlayOrder,
   GoXlrSimpleColourTarget,
   GoXlrVodMode,
   GoXlrWaterfallDirection
@@ -406,6 +408,74 @@ export async function setSimpleColour(
 export async function setActiveSamplerBank(serial: string, bank: GoXlrSampleBank): Promise<void> {
   await sendMixerCommand(serial, {
     SetActiveSamplerBank: bank
+  })
+}
+
+export async function setSamplerFunction(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  mode: GoXlrSamplePlaybackMode
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSamplerFunction: [bank, button, mode]
+  })
+}
+
+export async function setSamplerOrder(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  order: GoXlrSamplePlayOrder
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSamplerOrder: [bank, button, order]
+  })
+}
+
+export async function addSampleToButton(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  sampleName: string
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    AddSample: [bank, button, sampleName]
+  })
+}
+
+export async function removeSampleByIndex(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  index: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    RemoveSampleByIndex: [bank, button, index]
+  })
+}
+
+export async function setSampleStartPercent(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  index: number,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSampleStartPercent: [bank, button, index, value]
+  })
+}
+
+export async function setSampleStopPercent(
+  serial: string,
+  bank: GoXlrSampleBank,
+  button: GoXlrSampleButton,
+  index: number,
+  value: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSampleStopPercent: [bank, button, index, value]
   })
 }
 

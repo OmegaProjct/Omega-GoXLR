@@ -20,6 +20,8 @@ import type {
   GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
+  GoXlrSamplePlaybackMode,
+  GoXlrSamplePlayOrder,
   GoXlrSimpleColourTarget,
   GoXlrVodMode,
   GoXlrWaterfallDirection,
@@ -133,6 +135,15 @@ const SIMPLE_COLOUR_TARGETS: GoXlrSimpleColourTarget[] = [
 ]
 const SAMPLE_BANKS: GoXlrSampleBank[] = ['A', 'B', 'C']
 const SAMPLE_BUTTONS: GoXlrSampleButton[] = ['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight']
+const SAMPLE_PLAYBACK_MODES: GoXlrSamplePlaybackMode[] = [
+  'PlayNext',
+  'PlayStop',
+  'PlayFade',
+  'StopOnRelease',
+  'FadeOnRelease',
+  'Loop'
+]
+const SAMPLE_PLAY_ORDERS: GoXlrSamplePlayOrder[] = ['Sequential', 'Random']
 const TABS = [
   'Overview',
   'Faders',
@@ -174,6 +185,7 @@ function App(): JSX.Element {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [sampleDrafts, setSampleDrafts] = useState<Record<string, string>>({})
 
   const mixers = appState.status?.mixers ?? {}
   const serials = Object.keys(mixers)
@@ -182,6 +194,7 @@ function App(): JSX.Element {
   const profileFiles = appState.status?.files.profiles ?? []
   const micProfileFiles = appState.status?.files.mic_profiles ?? []
   const presetFiles = appState.status?.files.presets ?? []
+  const sampleLibraryEntries = Object.entries(appState.status?.files.samples ?? {})
   const activeSamplerBank = selectedMixer?.sampler?.active_bank ?? 'A'
 
   const deviceFacts = useMemo(() => {
@@ -1896,24 +1909,130 @@ function App(): JSX.Element {
                   Record buffer: {renderValue(selectedMixer.sampler?.record_buffer)}
                 </p>
               </div>
+
+              <div className="profileCard">
+                <span>Sample library</span>
+                <p className="muted small">Available files: {sampleLibraryEntries.length}</p>
+                <p className="muted small">
+                  Sample folder: {renderValue(appState.status?.paths.samples_directory)}
+                </p>
+                <button
+                  className="ghost tileButton"
+                  onClick={() => void window.goxlrApi.openPath('Samples')}
+                >
+                  Open sample folder
+                </button>
+              </div>
             </div>
 
             {selectedMixer.sampler ? (
               <div className="samplerGrid">
                 {SAMPLE_BUTTONS.map((button) => {
                   const buttonData = selectedMixer.sampler?.banks[activeSamplerBank]?.[button]
+                  const draftKey = `${activeSamplerBank}:${button}`
                   return (
                     <div key={button} className="profileCard">
                       <div className="panelHeader">
                         <span>{button}</span>
                         <span className="muted small">{buttonData?.samples.length ?? 0} samples</span>
                       </div>
-                      <p className="muted small">Mode: {buttonData?.function ?? 'n/a'}</p>
-                      <p className="muted small">Order: {buttonData?.order ?? 'n/a'}</p>
-                      <p className="muted small">
-                        Playing: {buttonData?.is_playing ? 'yes' : 'no'} | Recording:{' '}
-                        {buttonData?.is_recording ? 'yes' : 'no'}
-                      </p>
+                      <div className="stack compact">
+                        <label>
+                          <span className="muted small">Mode</span>
+                          <select
+                            value={buttonData?.function ?? 'PlayNext'}
+                            disabled={busy || !selectedSerial}
+                            onChange={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setSamplerFunction(
+                                    selectedSerial,
+                                    activeSamplerBank,
+                                    button,
+                                    event.target.value as GoXlrSamplePlaybackMode
+                                  ),
+                                `${button} mode updated`
+                              )
+                            }}
+                          >
+                            {SAMPLE_PLAYBACK_MODES.map((mode) => (
+                              <option key={mode} value={mode}>
+                                {mode}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label>
+                          <span className="muted small">Order</span>
+                          <select
+                            value={buttonData?.order ?? 'Sequential'}
+                            disabled={busy || !selectedSerial}
+                            onChange={(event) => {
+                              if (!selectedSerial) return
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.setSamplerOrder(
+                                    selectedSerial,
+                                    activeSamplerBank,
+                                    button,
+                                    event.target.value as GoXlrSamplePlayOrder
+                                  ),
+                                `${button} order updated`
+                              )
+                            }}
+                          >
+                            {SAMPLE_PLAY_ORDERS.map((order) => (
+                              <option key={order} value={order}>
+                                {order}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <p className="muted small">
+                          Playing: {buttonData?.is_playing ? 'yes' : 'no'} | Recording:{' '}
+                          {buttonData?.is_recording ? 'yes' : 'no'}
+                        </p>
+                        <label>
+                          <span className="muted small">Add sample from library</span>
+                          <select
+                            value={sampleDrafts[draftKey] ?? ''}
+                            disabled={busy || !selectedSerial || sampleLibraryEntries.length === 0}
+                            onChange={(event) => {
+                              const nextValue = event.target.value
+                              setSampleDrafts((current) => ({
+                                ...current,
+                                [draftKey]: nextValue
+                              }))
+
+                              if (!selectedSerial || !nextValue) return
+
+                              void runAction(
+                                () =>
+                                  window.goxlrApi.addSample(
+                                    selectedSerial,
+                                    activeSamplerBank,
+                                    button,
+                                    nextValue
+                                  ),
+                                `${nextValue} added to ${button}`
+                              ).then(() => {
+                                setSampleDrafts((current) => ({
+                                  ...current,
+                                  [draftKey]: ''
+                                }))
+                              })
+                            }}
+                          >
+                            <option value="">Choose a sample file</option>
+                            {sampleLibraryEntries.map(([fileKey, sampleFile]) => (
+                              <option key={fileKey} value={sampleFile.name}>
+                                {sampleFile.name} ({sampleFile.gain_pct}%)
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
                       <div className="buttonRow tight">
                         <button
                           disabled={busy || !selectedSerial}
@@ -1943,11 +2062,81 @@ function App(): JSX.Element {
                       </div>
                       <div className="sampleList">
                         {(buttonData?.samples ?? []).map((sample, index) => (
-                          <div key={`${button}-${index}`} className="sampleRow">
-                            <strong>{sample.name}</strong>
-                            <span>
-                              {sample.start_pct}% - {sample.stop_pct}%
-                            </span>
+                          <div key={`${button}-${index}`} className="sampleEditor">
+                            <div className="sampleRow">
+                              <strong>{sample.name}</strong>
+                              <button
+                                className="ghost"
+                                disabled={busy || !selectedSerial}
+                                onClick={() => {
+                                  if (!selectedSerial) return
+                                  void runAction(
+                                    () =>
+                                      window.goxlrApi.removeSample(
+                                        selectedSerial,
+                                        activeSamplerBank,
+                                        button,
+                                        index
+                                      ),
+                                    `${sample.name} removed`
+                                  )
+                                }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            <div className="sampleTrimGrid">
+                              <label>
+                                <span className="muted small">Start %</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={100}
+                                  step={0.1}
+                                  defaultValue={sample.start_pct}
+                                  disabled={busy || !selectedSerial}
+                                  onBlur={(event) => {
+                                    if (!selectedSerial) return
+                                    void runAction(
+                                      () =>
+                                        window.goxlrApi.setSampleStart(
+                                          selectedSerial,
+                                          activeSamplerBank,
+                                          button,
+                                          index,
+                                          Number((event.target as HTMLInputElement).value)
+                                        ),
+                                      `${sample.name} start updated`
+                                    )
+                                  }}
+                                />
+                              </label>
+                              <label>
+                                <span className="muted small">Stop %</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={100}
+                                  step={0.1}
+                                  defaultValue={sample.stop_pct}
+                                  disabled={busy || !selectedSerial}
+                                  onBlur={(event) => {
+                                    if (!selectedSerial) return
+                                    void runAction(
+                                      () =>
+                                        window.goxlrApi.setSampleStop(
+                                          selectedSerial,
+                                          activeSamplerBank,
+                                          button,
+                                          index,
+                                          Number((event.target as HTMLInputElement).value)
+                                        ),
+                                      `${sample.name} stop updated`
+                                    )
+                                  }}
+                                />
+                              </label>
+                            </div>
                           </div>
                         ))}
                       </div>

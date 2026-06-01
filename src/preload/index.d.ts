@@ -19,6 +19,8 @@ import type {
   GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
+  GoXlrSamplePlaybackMode,
+  GoXlrSamplePlayOrder,
   GoXlrSimpleColourTarget,
   GoXlrVodMode,
   GoXlrWaterfallDirection
@@ -110,6 +112,44 @@ export interface GoXlrBridge {
     colour: string
   ) => Promise<GoXlrAppState>
   setSamplerBank: (serial: string, bank: GoXlrSampleBank) => Promise<GoXlrAppState>
+  setSamplerFunction: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    mode: GoXlrSamplePlaybackMode
+  ) => Promise<GoXlrAppState>
+  setSamplerOrder: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    order: GoXlrSamplePlayOrder
+  ) => Promise<GoXlrAppState>
+  addSample: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    sampleName: string
+  ) => Promise<GoXlrAppState>
+  removeSample: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    index: number
+  ) => Promise<GoXlrAppState>
+  setSampleStart: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    index: number,
+    value: number
+  ) => Promise<GoXlrAppState>
+  setSampleStop: (
+    serial: string,
+    bank: GoXlrSampleBank,
+    button: GoXlrSampleButton,
+    index: number,
+    value: number
+  ) => Promise<GoXlrAppState>
   playNextSample: (
     serial: string,
     bank: GoXlrSampleBank,

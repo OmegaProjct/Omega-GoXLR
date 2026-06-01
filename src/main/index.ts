@@ -2,7 +2,9 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { GoXlrDaemonManager } from './goxlrDaemon'
 import {
+  addSampleToButton,
   fetchDaemonStatus,
+  removeSampleByIndex,
   setEchoAmount,
   setEchoStyle,
   setFxEnabled,
@@ -44,7 +46,11 @@ import {
   setReverbStyle,
   setRobotEnabled,
   setRobotStyle,
+  setSampleStartPercent,
+  setSampleStopPercent,
   setSamplerFadeDuration,
+  setSamplerFunction,
+  setSamplerOrder,
   setSamplerResetOnClear,
   setSimpleColour,
   setRouterEntry,
@@ -77,6 +83,8 @@ import {
   GoXlrRobotStyle,
   GoXlrSampleBank,
   GoXlrSampleButton,
+  GoXlrSamplePlaybackMode,
+  GoXlrSamplePlayOrder,
   GoXlrSimpleColourTarget,
   GoXlrVodMode,
   GoXlrWaterfallDirection
@@ -536,6 +544,98 @@ function setupIpc(): void {
     'goxlr:set-sampler-bank',
     async (_event, payload: { serial: string; bank: GoXlrSampleBank }) => {
       await setActiveSamplerBank(payload.serial, payload.bank)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sampler-function',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        mode: GoXlrSamplePlaybackMode
+      }
+    ) => {
+      await setSamplerFunction(payload.serial, payload.bank, payload.button, payload.mode)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sampler-order',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        order: GoXlrSamplePlayOrder
+      }
+    ) => {
+      await setSamplerOrder(payload.serial, payload.bank, payload.button, payload.order)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:add-sample',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        sampleName: string
+      }
+    ) => {
+      await addSampleToButton(payload.serial, payload.bank, payload.button, payload.sampleName)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:remove-sample',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        index: number
+      }
+    ) => {
+      await removeSampleByIndex(payload.serial, payload.bank, payload.button, payload.index)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sample-start',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        index: number
+        value: number
+      }
+    ) => {
+      await setSampleStartPercent(payload.serial, payload.bank, payload.button, payload.index, payload.value)
+      return buildAppState()
+    }
+  )
+  ipcMain.handle(
+    'goxlr:set-sample-stop',
+    async (
+      _event,
+      payload: {
+        serial: string
+        bank: GoXlrSampleBank
+        button: GoXlrSampleButton
+        index: number
+        value: number
+      }
+    ) => {
+      await setSampleStopPercent(payload.serial, payload.bank, payload.button, payload.index, payload.value)
       return buildAppState()
     }
   )

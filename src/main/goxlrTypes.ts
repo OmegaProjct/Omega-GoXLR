@@ -87,6 +87,14 @@ export type GoXlrSimpleColourTarget =
   | 'Scribble4'
 export type GoXlrSampleBank = 'A' | 'B' | 'C'
 export type GoXlrSampleButton = 'TopLeft' | 'TopRight' | 'BottomLeft' | 'BottomRight'
+export type GoXlrSamplePlaybackMode =
+  | 'PlayNext'
+  | 'PlayStop'
+  | 'PlayFade'
+  | 'StopOnRelease'
+  | 'FadeOnRelease'
+  | 'Loop'
+export type GoXlrSamplePlayOrder = 'Sequential' | 'Random'
 
 export type GoXlrAppState = {
   daemon: {
@@ -131,6 +139,13 @@ export type DaemonStatus = {
     profiles: string[]
     mic_profiles: string[]
     presets: string[]
+    samples: Record<
+      string,
+      {
+        name: string
+        gain_pct: number
+      }
+    >
     icons: string[]
   }
 }
@@ -292,8 +307,8 @@ export type MixerStatus = {
       Record<
         GoXlrSampleButton,
         {
-          function: string
-          order: string
+          function: GoXlrSamplePlaybackMode
+          order: GoXlrSamplePlayOrder
           samples: Array<{ name: string; start_pct: number; stop_pct: number }>
           is_playing: boolean
           is_recording: boolean

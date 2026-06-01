@@ -2,6 +2,30 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.1] - 2026-06-01
+
+### English
+
+#### Added
+- **Expanded desktop MVP**: Added a multi-section control surface with Overview, Faders, Routing, Mic, and Profiles tabs.
+- **Live polling refresh**: The app now refreshes daemon-backed mixer state automatically while the daemon is online.
+- **Profile and folder actions**: Added profile loading/saving, mic profile loading/saving, and daemon path opening shortcuts.
+
+#### Changed
+- **Bridge coverage**: Extended the Electron main/preload bridge to support fader assignment, routing changes, microphone type/gain control, and profile actions.
+- **Richer daemon typing**: Replaced the narrow prototype status model with a broader typed GoXLR state model covering mixers, files, paths, faders, routing, and mic state.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Erweitertes Desktop-MVP**: Mehrteilige Mixer-Oberflaeche mit den Bereichen Overview, Faders, Routing, Mic und Profiles.
+- **Live-Polling fuer Statusupdates**: Der daemon-basierte Mixer-Status wird nun automatisch aktualisiert, solange der Daemon online ist.
+- **Profil- und Ordneraktionen**: Laden/Speichern von Profilen und Mic-Profilen sowie Schnellzugriffe auf daemon-verwaltete Ordner hinzugefuegt.
+
+#### Geaendert
+- **Erweiterte Bridge-Abdeckung**: Die Electron Main-/Preload-Bridge unterstuetzt jetzt Fader-Zuweisung, Routing-Aenderungen, Mikrofontyp/Mikrofon-Gain und Profilaktionen.
+- **Reicheres Daemon-Typmodell**: Das enge Prototyp-Statusmodell wurde durch ein breiteres typisiertes GoXLR-Zustandsmodell fuer Mixer, Dateien, Pfade, Fader, Routing und Mic-Status ersetzt.
+
 ## [0.1.0] - 2026-06-01
 
 ### English

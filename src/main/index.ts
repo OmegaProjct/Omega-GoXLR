@@ -1,8 +1,28 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { GoXlrDaemonManager } from './goxlrDaemon'
-import { fetchDaemonStatus, setChannelVolume } from './goxlrApi'
-import { GoXlrAppState } from './goxlrTypes'
+import {
+  fetchDaemonStatus,
+  loadMicProfile,
+  loadProfile,
+  openPath,
+  saveMicProfile,
+  saveProfile,
+  setChannelVolume,
+  setFaderAssignment,
+  setMicrophoneGain,
+  setMicrophoneType,
+  setRouterEntry
+} from './goxlrApi'
+import {
+  GoXlrAppState,
+  GoXlrChannelName,
+  GoXlrFaderName,
+  GoXlrInputDevice,
+  GoXlrMicrophoneType,
+  GoXlrOutputDevice,
+  GoXlrPathType
+} from './goxlrTypes'
 
 const appDataPath = app.getPath('appData')
 const customUserDataPath = join(appDataPath, 'OmegaProjects', 'Omega GoXLR Desktop')
@@ -84,11 +104,79 @@ function setupIpc(): void {
 
   ipcMain.handle(
     'goxlr:set-volume',
-    async (_event, payload: { serial: string; channel: string; volume: number }) => {
+    async (_event, payload: { serial: string; channel: GoXlrChannelName; volume: number }) => {
       await setChannelVolume(payload.serial, payload.channel, payload.volume)
       return buildAppState()
     }
   )
+
+  ipcMain.handle(
+    'goxlr:set-fader',
+    async (_event, payload: { serial: string; fader: GoXlrFaderName; channel: GoXlrChannelName }) => {
+      await setFaderAssignment(payload.serial, payload.fader, payload.channel)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-router',
+    async (
+      _event,
+      payload: {
+        serial: string
+        input: GoXlrInputDevice
+        output: GoXlrOutputDevice
+        enabled: boolean
+      }
+    ) => {
+      await setRouterEntry(payload.serial, payload.input, payload.output, payload.enabled)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-mic-type',
+    async (_event, payload: { serial: string; microphoneType: GoXlrMicrophoneType }) => {
+      await setMicrophoneType(payload.serial, payload.microphoneType)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-mic-gain',
+    async (_event, payload: { serial: string; microphoneType: GoXlrMicrophoneType; gain: number }) => {
+      await setMicrophoneGain(payload.serial, payload.microphoneType, payload.gain)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle('goxlr:load-profile', async (_event, payload: { serial: string; profileName: string }) => {
+    await loadProfile(payload.serial, payload.profileName)
+    return buildAppState()
+  })
+
+  ipcMain.handle('goxlr:save-profile', async (_event, payload: { serial: string }) => {
+    await saveProfile(payload.serial)
+    return buildAppState()
+  })
+
+  ipcMain.handle(
+    'goxlr:load-mic-profile',
+    async (_event, payload: { serial: string; profileName: string }) => {
+      await loadMicProfile(payload.serial, payload.profileName)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle('goxlr:save-mic-profile', async (_event, payload: { serial: string }) => {
+    await saveMicProfile(payload.serial)
+    return buildAppState()
+  })
+
+  ipcMain.handle('goxlr:open-path', async (_event, payload: { pathType: GoXlrPathType }) => {
+    await openPath(payload.pathType)
+    return true
+  })
 }
 
 app.whenReady().then(async () => {

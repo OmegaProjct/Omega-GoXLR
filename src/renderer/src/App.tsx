@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import type {
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEffectPreset,
   GoXlrFaderName,
   GoXlrInputDevice,
+  GoXlrMix,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
   GoXlrPathType,
+  GoXlrVodMode,
   MixerStatus
 } from '../../main/goxlrTypes'
 
@@ -65,7 +68,11 @@ const OUTPUT_OPTIONS: GoXlrOutputDevice[] = [
 ]
 const MIC_TYPES: GoXlrMicrophoneType[] = ['Dynamic', 'Condenser', 'Jack']
 const PATH_OPTIONS: GoXlrPathType[] = ['Profiles', 'MicProfiles', 'Presets', 'Samples', 'Icons', 'Logs']
-const TABS = ['Overview', 'Faders', 'Routing', 'Mic', 'Profiles'] as const
+const SUBMIX_CHANNELS = ['Mic', 'LineIn', 'Console', 'System', 'Game', 'Chat', 'Sample', 'Music'] as const
+const MIX_OPTIONS: GoXlrMix[] = ['A', 'B']
+const VOD_OPTIONS: GoXlrVodMode[] = ['Routable', 'StreamNoMusic']
+const EFFECT_PRESETS: GoXlrEffectPreset[] = ['Preset1', 'Preset2', 'Preset3', 'Preset4', 'Preset5', 'Preset6']
+const TABS = ['Overview', 'Faders', 'Routing', 'Mic', 'Submix', 'Profiles', 'Diagnostics'] as const
 
 type AppTab = (typeof TABS)[number]
 
@@ -75,6 +82,16 @@ function formatDeviceLabel(serial: string, mixer: MixerStatus): string {
 
 function classNames(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(' ')
+}
+
+function renderValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return 'n/a'
+  }
+  if (typeof value === 'object') {
+    return JSON.stringify(value)
+  }
+  return String(value)
 }
 
 function App(): JSX.Element {
@@ -91,6 +108,7 @@ function App(): JSX.Element {
 
   const profileFiles = appState.status?.files.profiles ?? []
   const micProfileFiles = appState.status?.files.mic_profiles ?? []
+  const presetFiles = appState.status?.files.presets ?? []
 
   const deviceFacts = useMemo(() => {
     if (!selectedMixer) {
@@ -269,6 +287,20 @@ function App(): JSX.Element {
                   </div>
                 ))}
               </div>
+              <div className="factGrid compactTop">
+                <div className="factCard">
+                  <span>Monitor output</span>
+                  <strong>{selectedMixer.levels.output_monitor}</strong>
+                </div>
+                <div className="factCard">
+                  <span>Submix</span>
+                  <strong>{selectedMixer.levels.submix_supported ? 'Supported' : 'Not supported'}</strong>
+                </div>
+                <div className="factCard">
+                  <span>Driver</span>
+                  <strong>{appState.status?.config.driver_interface?.interface ?? 'Unknown'}</strong>
+                </div>
+              </div>
             </>
           ) : (
             <p className="muted">Start the daemon and select a GoXLR device to inspect live status.</p>
@@ -298,6 +330,88 @@ function App(): JSX.Element {
             <div className="panelHeader">
               <span>Channel levels</span>
               <span className="muted small">Live daemon-backed control</span>
+            </div>
+            <div className="quickControlGrid">
+              <label className="sliderCard">
+                <span>Monitor output</span>
+                <select
+                  value={selectedMixer.levels.output_monitor}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setMonitorMix(
+                          selectedSerial,
+                          event.target.value as GoXlrOutputDevice
+                        ),
+                      'Monitor output updated'
+                    )
+                  }}
+                >
+                  {OUTPUT_OPTIONS.map((output) => (
+                    <option key={output} value={output}>
+                      {output}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>Bleep level</span>
+                  <strong>{selectedMixer.levels.bleep}</strong>
+                </div>
+                <input
+                  type="range"
+                  min={-36}
+                  max={0}
+                  value={selectedMixer.levels.bleep}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setBleepLevel(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'Bleep level updated'
+                    )
+                  }}
+                  onTouchEnd={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setBleepLevel(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'Bleep level updated'
+                    )
+                  }}
+                />
+              </label>
+
+              <label className="sliderCard">
+                <div className="sliderHeader">
+                  <span>De-esser</span>
+                  <strong>{selectedMixer.levels.deess}</strong>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={selectedMixer.levels.deess}
+                  disabled={busy || !selectedSerial}
+                  onMouseUp={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setDeEsser(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'De-esser updated'
+                    )
+                  }}
+                  onTouchEnd={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setDeEsser(selectedSerial, Number((event.target as HTMLInputElement).value)),
+                      'De-esser updated'
+                    )
+                  }}
+                />
+              </label>
             </div>
             <div className="grid">
               {CHANNEL_ORDER.filter((channel) => selectedMixer.levels.volumes[channel] !== undefined).map(
@@ -700,6 +814,258 @@ function App(): JSX.Element {
                   <button className="ghost tileButton" onClick={() => void window.goxlrApi.openPath('Logs')}>
                     Open logs folder
                   </button>
+                </div>
+              </div>
+
+              <div className="profileCard">
+                <div className="panelHeader">
+                  <span>Effect preset</span>
+                  <button
+                    className="ghost tileButton"
+                    disabled={busy || !selectedSerial}
+                    onClick={() => {
+                      if (!selectedSerial) return
+                      void runAction(() => window.goxlrApi.saveEffectPreset(selectedSerial), 'Effect preset saved')
+                    }}
+                  >
+                    Save active
+                  </button>
+                </div>
+                <select
+                  defaultValue={EFFECT_PRESETS[0]}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () =>
+                        window.goxlrApi.setEffectPreset(
+                          selectedSerial,
+                          event.target.value as GoXlrEffectPreset
+                        ),
+                      'Effect preset switched'
+                    )
+                  }}
+                >
+                  {EFFECT_PRESETS.map((preset) => (
+                    <option key={preset} value={preset}>
+                      {preset}
+                    </option>
+                  ))}
+                </select>
+                <p className="muted small">Preset files available: {presetFiles.length}</p>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        {selectedMixer && selectedTab === 'Submix' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Submix and monitor</span>
+              <span className="muted small">Advanced bus behavior</span>
+            </div>
+            <div className="submixHeader">
+              <label className="toggleCard">
+                <span>Monitor with FX</span>
+                <input
+                  type="checkbox"
+                  checked={selectedMixer.settings.enable_monitor_with_fx}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setMonitorWithFx(selectedSerial, event.target.checked),
+                      'Monitor FX updated'
+                    )
+                  }}
+                />
+              </label>
+              <label className="toggleCard">
+                <span>Lock faders</span>
+                <input
+                  type="checkbox"
+                  checked={selectedMixer.settings.lock_faders}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setLockFaders(selectedSerial, event.target.checked),
+                      'Fader lock updated'
+                    )
+                  }}
+                />
+              </label>
+              <label className="toggleCard wideCard">
+                <span>VOD mode</span>
+                <select
+                  value={selectedMixer.settings.vod_mode as GoXlrVodMode}
+                  disabled={busy || !selectedSerial}
+                  onChange={(event) => {
+                    if (!selectedSerial) return
+                    void runAction(
+                      () => window.goxlrApi.setVodMode(selectedSerial, event.target.value as GoXlrVodMode),
+                      'VOD mode updated'
+                    )
+                  }}
+                >
+                  {VOD_OPTIONS.map((mode) => (
+                    <option key={mode} value={mode}>
+                      {mode}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            {selectedMixer.levels.submix ? (
+              <>
+                <div className="routingTableWrap">
+                  <table className="routingTable">
+                    <thead>
+                      <tr>
+                        <th>Channel</th>
+                        <th>Volume</th>
+                        <th>Linked</th>
+                        <th>Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {SUBMIX_CHANNELS.map((channel) => (
+                        <tr key={channel}>
+                          <td>{channel}</td>
+                          <td>
+                            <input
+                              type="range"
+                              min={0}
+                              max={255}
+                              value={selectedMixer.levels.submix?.inputs[channel].volume ?? 0}
+                              disabled={busy || !selectedSerial}
+                              onMouseUp={(event) => {
+                                if (!selectedSerial) return
+                                void runAction(
+                                  () =>
+                                    window.goxlrApi.setSubmixVolume(
+                                      selectedSerial,
+                                      channel,
+                                      Number((event.target as HTMLInputElement).value)
+                                    ),
+                                  `${channel} submix volume updated`
+                                )
+                              }}
+                              onTouchEnd={(event) => {
+                                if (!selectedSerial) return
+                                void runAction(
+                                  () =>
+                                    window.goxlrApi.setSubmixVolume(
+                                      selectedSerial,
+                                      channel,
+                                      Number((event.target as HTMLInputElement).value)
+                                    ),
+                                  `${channel} submix volume updated`
+                                )
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={Boolean(selectedMixer.levels.submix?.inputs[channel].linked)}
+                              disabled={busy || !selectedSerial}
+                              onChange={(event) => {
+                                if (!selectedSerial) return
+                                void runAction(
+                                  () =>
+                                    window.goxlrApi.setSubmixLinked(
+                                      selectedSerial,
+                                      channel,
+                                      event.target.checked
+                                    ),
+                                  `${channel} submix link updated`
+                                )
+                              }}
+                            />
+                          </td>
+                          <td>{selectedMixer.levels.submix?.inputs[channel].ratio ?? 0}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="outputMixGrid">
+                  {OUTPUT_OPTIONS.map((output) => (
+                    <label key={output} className="micCard">
+                      <span>{output} mix bus</span>
+                      <select
+                        value={selectedMixer.levels.submix?.outputs[output] ?? 'A'}
+                        disabled={busy || !selectedSerial}
+                        onChange={(event) => {
+                          if (!selectedSerial) return
+                          void runAction(
+                            () =>
+                              window.goxlrApi.setSubmixOutputMix(
+                                selectedSerial,
+                                output,
+                                event.target.value as GoXlrMix
+                              ),
+                            `${output} submix bus updated`
+                          )
+                        }}
+                      >
+                        {MIX_OPTIONS.map((mix) => (
+                          <option key={mix} value={mix}>
+                            Mix {mix}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p className="muted">This mixer does not currently expose submix data.</p>
+            )}
+          </section>
+        ) : null}
+
+        {selectedMixer && selectedTab === 'Diagnostics' ? (
+          <section className="panel">
+            <div className="panelHeader">
+              <span>Diagnostics</span>
+              <span className="muted small">Current daemon-backed state snapshot</span>
+            </div>
+            <div className="diagnosticGrid">
+              <div className="profileCard">
+                <span>App + daemon</span>
+                <div className="stack compact">
+                  <p className="muted small">Daemon version: {appState.status?.config.daemon_version}</p>
+                  <p className="muted small">Platform: {appState.status?.config.platform}</p>
+                  <p className="muted small">
+                    Driver: {appState.status?.config.driver_interface?.interface ?? 'Unknown'}
+                  </p>
+                  <p className="muted small">HTTP bind: {appState.status?.config.http_settings.bind_address}</p>
+                </div>
+              </div>
+
+              <div className="profileCard">
+                <span>Settings flags</span>
+                <div className="stack compact">
+                  {Object.entries(selectedMixer.settings).map(([key, value]) => (
+                    <p className="muted small" key={key}>
+                      {key}: {renderValue(value)}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <div className="profileCard">
+                <span>Paths</span>
+                <div className="stack compact">
+                  {Object.entries(appState.status?.paths ?? {}).map(([key, value]) => (
+                    <p className="muted small" key={key}>
+                      {key}: {renderValue(value)}
+                    </p>
+                  ))}
                 </div>
               </div>
             </div>

@@ -8,20 +8,35 @@ import {
   openPath,
   saveMicProfile,
   saveProfile,
+  saveActivePreset,
+  setActiveEffectPreset,
+  setBleepLevel,
   setChannelVolume,
+  setDeEsser,
   setFaderAssignment,
+  setLockFaders,
+  setMonitorMix,
+  setMonitorWithFx,
   setMicrophoneGain,
   setMicrophoneType,
-  setRouterEntry
+  setRouterEntry,
+  setSubmixEnabled,
+  setSubmixLinked,
+  setSubmixOutputMix,
+  setSubmixVolume,
+  setVodMode
 } from './goxlrApi'
 import {
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEffectPreset,
   GoXlrFaderName,
   GoXlrInputDevice,
+  GoXlrMix,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
-  GoXlrPathType
+  GoXlrPathType,
+  GoXlrVodMode
 } from './goxlrTypes'
 
 const appDataPath = app.getPath('appData')
@@ -176,6 +191,113 @@ function setupIpc(): void {
   ipcMain.handle('goxlr:open-path', async (_event, payload: { pathType: GoXlrPathType }) => {
     await openPath(payload.pathType)
     return true
+  })
+
+  ipcMain.handle(
+    'goxlr:set-monitor-mix',
+    async (_event, payload: { serial: string; output: GoXlrOutputDevice }) => {
+      await setMonitorMix(payload.serial, payload.output)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-monitor-with-fx',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setMonitorWithFx(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-submix-enabled',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setSubmixEnabled(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-submix-volume',
+    async (
+      _event,
+      payload: {
+        serial: string
+        channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music'
+        volume: number
+      }
+    ) => {
+      await setSubmixVolume(payload.serial, payload.channel, payload.volume)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-submix-linked',
+    async (
+      _event,
+      payload: {
+        serial: string
+        channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music'
+        linked: boolean
+      }
+    ) => {
+      await setSubmixLinked(payload.serial, payload.channel, payload.linked)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-submix-output-mix',
+    async (_event, payload: { serial: string; output: GoXlrOutputDevice; mix: GoXlrMix }) => {
+      await setSubmixOutputMix(payload.serial, payload.output, payload.mix)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-bleep-level',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setBleepLevel(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-deesser',
+    async (_event, payload: { serial: string; value: number }) => {
+      await setDeEsser(payload.serial, payload.value)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-lock-faders',
+    async (_event, payload: { serial: string; enabled: boolean }) => {
+      await setLockFaders(payload.serial, payload.enabled)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-vod-mode',
+    async (_event, payload: { serial: string; mode: GoXlrVodMode }) => {
+      await setVodMode(payload.serial, payload.mode)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle(
+    'goxlr:set-effect-preset',
+    async (_event, payload: { serial: string; preset: GoXlrEffectPreset }) => {
+      await setActiveEffectPreset(payload.serial, payload.preset)
+      return buildAppState()
+    }
+  )
+
+  ipcMain.handle('goxlr:save-effect-preset', async (_event, payload: { serial: string }) => {
+    await saveActivePreset(payload.serial)
+    return buildAppState()
   })
 }
 

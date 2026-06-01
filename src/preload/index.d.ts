@@ -1,11 +1,14 @@
 import type {
   GoXlrAppState,
   GoXlrChannelName,
+  GoXlrEffectPreset,
   GoXlrFaderName,
   GoXlrInputDevice,
+  GoXlrMix,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
-  GoXlrPathType
+  GoXlrPathType,
+  GoXlrVodMode
 } from '../main/goxlrTypes'
 
 export interface GoXlrBridge {
@@ -35,6 +38,30 @@ export interface GoXlrBridge {
   loadMicProfile: (serial: string, profileName: string) => Promise<GoXlrAppState>
   saveMicProfile: (serial: string) => Promise<GoXlrAppState>
   openPath: (pathType: GoXlrPathType) => Promise<boolean>
+  setMonitorMix: (serial: string, output: GoXlrOutputDevice) => Promise<GoXlrAppState>
+  setMonitorWithFx: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setSubmixEnabled: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setSubmixVolume: (
+    serial: string,
+    channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music',
+    volume: number
+  ) => Promise<GoXlrAppState>
+  setSubmixLinked: (
+    serial: string,
+    channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music',
+    linked: boolean
+  ) => Promise<GoXlrAppState>
+  setSubmixOutputMix: (
+    serial: string,
+    output: GoXlrOutputDevice,
+    mix: GoXlrMix
+  ) => Promise<GoXlrAppState>
+  setBleepLevel: (serial: string, value: number) => Promise<GoXlrAppState>
+  setDeEsser: (serial: string, value: number) => Promise<GoXlrAppState>
+  setLockFaders: (serial: string, enabled: boolean) => Promise<GoXlrAppState>
+  setVodMode: (serial: string, mode: GoXlrVodMode) => Promise<GoXlrAppState>
+  setEffectPreset: (serial: string, preset: GoXlrEffectPreset) => Promise<GoXlrAppState>
+  saveEffectPreset: (serial: string) => Promise<GoXlrAppState>
 }
 
 declare global {

@@ -1,11 +1,14 @@
 import {
   DaemonStatus,
   GoXlrChannelName,
+  GoXlrEffectPreset,
   GoXlrFaderName,
   GoXlrInputDevice,
+  GoXlrMix,
   GoXlrMicrophoneType,
   GoXlrOutputDevice,
-  GoXlrPathType
+  GoXlrPathType,
+  GoXlrVodMode
 } from './goxlrTypes'
 
 const ENDPOINT = 'http://127.0.0.1:14564'
@@ -128,4 +131,89 @@ export async function openPath(pathType: GoXlrPathType): Promise<void> {
   await sendDaemonControl({
     OpenPath: pathType
   })
+}
+
+export async function setMonitorMix(serial: string, output: GoXlrOutputDevice): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMonitorMix: output
+  })
+}
+
+export async function setMonitorWithFx(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetMonitorWithFx: enabled
+  })
+}
+
+export async function setSubmixEnabled(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSubMixEnabled: enabled
+  })
+}
+
+export async function setSubmixVolume(
+  serial: string,
+  channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music',
+  volume: number
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSubMixVolume: [channel, volume]
+  })
+}
+
+export async function setSubmixLinked(
+  serial: string,
+  channel: 'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music',
+  linked: boolean
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSubMixLinked: [channel, linked]
+  })
+}
+
+export async function setSubmixOutputMix(
+  serial: string,
+  output: GoXlrOutputDevice,
+  mix: GoXlrMix
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSubMixOutputMix: [output, mix]
+  })
+}
+
+export async function setBleepLevel(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetSwearButtonVolume: value
+  })
+}
+
+export async function setDeEsser(serial: string, value: number): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetDeeser: value
+  })
+}
+
+export async function setLockFaders(serial: string, enabled: boolean): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetLockFaders: enabled
+  })
+}
+
+export async function setVodMode(serial: string, mode: GoXlrVodMode): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetVodMode: mode
+  })
+}
+
+export async function setActiveEffectPreset(
+  serial: string,
+  preset: GoXlrEffectPreset
+): Promise<void> {
+  await sendMixerCommand(serial, {
+    SetActiveEffectPreset: preset
+  })
+}
+
+export async function saveActivePreset(serial: string): Promise<void> {
+  await sendMixerCommand(serial, 'SaveActivePreset')
 }

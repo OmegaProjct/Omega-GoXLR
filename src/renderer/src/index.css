@@ -239,6 +239,10 @@ h2 {
   margin-top: 18px;
 }
 
+.factGrid.compactTop {
+  margin-top: 14px;
+}
+
 .factCard {
   border-radius: 18px;
   padding: 14px;
@@ -272,6 +276,18 @@ h2 {
 
 .grid {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.quickControlGrid,
+.outputMixGrid,
+.diagnosticGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.quickControlGrid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-bottom: 16px;
 }
 
 .sliderCard,
@@ -339,6 +355,35 @@ h2 {
 
 .profileGrid {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.submixHeader {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.toggleCard {
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.wideCard {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.outputMixGrid,
+.diagnosticGrid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 16px;
 }
 
 @media (max-width: 1080px) {

@@ -2,6 +2,32 @@
 
 The format is based on Keep a Changelog. Dieses Projekt nutzt das klassische Semantic Versioning (`X.Y.Z`).
 
+## [0.1.2] - 2026-06-01
+
+### English
+
+#### Added
+- **Submix workspace**: Added a dedicated Submix tab with submix channel volume controls, linked-state toggles, and output bus assignment.
+- **Diagnostics workspace**: Added a Diagnostics tab showing daemon version, driver interface, path data, and current mixer settings flags.
+- **Advanced quick controls**: Added monitor output switching, bleep level control, de-esser control, VOD mode switching, fader lock, and monitor-with-effects toggles.
+- **Effect preset actions**: Added active effect preset switching and save actions to the Profiles section.
+
+#### Changed
+- **Bridge expansion for advanced controls**: The Electron bridge now supports monitor mix, submix, de-esser, bleep level, effect preset, VOD mode, and lock-fader commands.
+- **Typed mixer model growth**: Added submix, mix bus, effect preset, and VOD-related typing to the shared GoXLR state model.
+
+### Deutsch
+
+#### Hinzugefuegt
+- **Submix-Arbeitsbereich**: Eigener Submix-Tab mit Lautstaerke-Reglern pro Submix-Kanal, Link-Toggles und Ausgangs-Bus-Zuweisung.
+- **Diagnose-Arbeitsbereich**: Neuer Diagnostics-Tab mit Daemon-Version, Treiber-Interface, Pfaddaten und aktuellen Mixer-Settings-Flags.
+- **Erweiterte Schnellsteuerung**: Monitor-Ausgang, Bleep-Level, De-Esser, VOD-Modus, Fader-Lock und Monitor-mit-Effekten koennen jetzt direkt gesteuert werden.
+- **Effect-Preset-Aktionen**: Aktives Effekt-Preset umschalten und speichern nun direkt im Profiles-Bereich moeglich.
+
+#### Geaendert
+- **Bridge-Ausbau fuer Advanced Controls**: Die Electron-Bridge unterstuetzt jetzt Monitor-Mix, Submix, De-Esser, Bleep-Level, Effekt-Presets, VOD-Modus und Fader-Lock.
+- **Groesseres typisiertes Mixer-Modell**: Das gemeinsame GoXLR-Zustandsmodell deckt nun Submix, Mix-Busse, Effekt-Presets und VOD-bezogene Daten mit ab.
+
 ## [0.1.1] - 2026-06-01
 
 ### English

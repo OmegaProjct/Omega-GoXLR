@@ -41,6 +41,9 @@ export type GoXlrOutputDevice =
   | 'StreamMix2'
 
 export type GoXlrMicrophoneType = 'Dynamic' | 'Condenser' | 'Jack'
+export type GoXlrMix = 'A' | 'B'
+export type GoXlrEffectPreset = 'Preset1' | 'Preset2' | 'Preset3' | 'Preset4' | 'Preset5' | 'Preset6'
+export type GoXlrVodMode = 'Routable' | 'StreamNoMusic'
 
 export type GoXlrAppState = {
   daemon: {
@@ -131,13 +134,28 @@ export type MixerStatus = {
     submix_supported: boolean
     output_monitor: GoXlrOutputDevice
     volumes: Record<GoXlrChannelName, number>
+    submix?: {
+      inputs: Record<
+        'Mic' | 'LineIn' | 'Console' | 'System' | 'Game' | 'Chat' | 'Sample' | 'Music',
+        {
+          volume: number
+          linked: boolean
+          ratio: number
+        }
+      >
+      outputs: Record<GoXlrOutputDevice, GoXlrMix>
+    } | null
     bleep: number
     deess: number
   }
   router: Record<GoXlrInputDevice, Record<GoXlrOutputDevice, boolean>>
   settings: {
     mute_hold_duration: number
+    vc_mute_also_mute_cm: boolean
+    enable_monitor_with_fx: boolean
+    reset_sampler_on_clear: boolean
     lock_faders: boolean
+    fade_duration: number
     vod_mode: string
   }
 }
